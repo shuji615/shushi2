@@ -1,0 +1,42 @@
+﻿2015/09/05 20:58:41 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213_sub2\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\openCV\opencv\build\include\opencv2 /IC:\openCV\opencv\build\include\opencv /IC:\openCV\opencv\build\include /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt BMGC.cpp
+         BMGC.cpp
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213_sub2\consoleapplication2\BinaryLabel.h(322): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213_sub2\consoleapplication2\BinaryLabel.h(323): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213_sub2\Release\ConsoleApplication2.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\openCV\opencv\build\x86\vc11\staticlib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213_sub2\Release\ConsoleApplication2.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213_sub2\Release\ConsoleApplication2.lib" /MACHINE:X86 /SAFESEH Release\ConsoleApplication2.res
+         Release\BMGC.obj
+         Release\graph.obj
+         Release\maxflow.obj
+     1>BMGC.obj : error LNK2001: 外部シンボル ""class cv::Ptr<class cv::superres::DenseOpticalFlowExt> __cdecl cv::superres::createOptFlow_DualTVL1(void)" (?createOptFlow_DualTVL1@superres@cv@@YA?AV?$Ptr@VDenseOpticalFlowExt@superres@cv@@@2@XZ)" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_ICOpen@12" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_ICClose@4" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_ICSendMessage@16" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_ICDecompress" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIFileInit@0" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIFileRelease@4" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIFileOpenA@16" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIFileGetStream@16" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIFileCreateStreamA@12" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIStreamRelease@4" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIStreamInfoA@12" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIStreamSetFormat@16" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIStreamWrite@32" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIStreamGetFrameOpen@8" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIStreamGetFrame@8" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIStreamGetFrameClose@4" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVIMakeCompressedStream@16" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_AVISaveOptions@20" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_capCreateCaptureWindowA@32" は未解決です。
+     1>opencv_highgui249.lib(cap_vfw.obj) : error LNK2001: 外部シンボル "_capGetDriverDescriptionA@20" は未解決です。
+     1>C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213_sub2\Release\ConsoleApplication2.exe : fatal error LNK1120: 21 件の未解決の外部参照
+     1>プロジェクト "C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213_sub2\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット) のビルドが終了しました -- 失敗。
+
+ビルドに失敗しました。
+
+経過時間 00:00:02.26

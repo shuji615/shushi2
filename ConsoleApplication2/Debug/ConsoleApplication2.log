@@ -1,0 +1,148 @@
+﻿2013/12/19 11:37:45 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /IC:\openCV\opencv\build\include\opencv2 /IC:\openCV\opencv\build\include\opencv /IC:\openCV\opencv\build\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MT /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt BMGC.cpp graph.cpp maxflow.cpp
+         maxflow.cpp
+         graph.cpp
+         BMGC.cpp
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>c:\opencv\opencv\build\include\opencv2\legacy\compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213\consoleapplication2\binarylabel.h(322): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213\consoleapplication2\binarylabel.h(323): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213\consoleapplication2\bmgc.cpp(105): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(290) : 'scanf' の宣言を確認してください。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213\consoleapplication2\bmgc.cpp(136): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213\consoleapplication2\bmgc.cpp(252): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\shuji\documents\visual studio 2012\projects\ddm_20131213\consoleapplication2\bmgc.cpp(258): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+         コードを生成中...
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe /D _UNICODE /D UNICODE /l"0x0409" /nologo /fo"Debug\ConsoleApplication2.res" ConsoleApplication2.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213\Debug\ConsoleApplication2.exe" /INCREMENTAL /NOLOGO /LIBPATH:C:\openCV\opencv\build\x86\vc11\staticlib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213\Debug\ConsoleApplication2.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213\Debug\ConsoleApplication2.lib" /MACHINE:X86 Debug\ConsoleApplication2.res
+         Debug\BMGC.obj
+         Debug\graph.obj
+         Debug\maxflow.obj
+     1>IlmImf.lib(ImfHeader.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfHeader.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfFrameBuffer.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfFrameBuffer.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfInputFile.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfInputFile.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfOutputFile.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfOutputFile.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChannelList.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChannelList.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(half.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(half.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChromaticities.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChromaticities.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStandardAttributes.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStandardAttributes.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IexBaseExc.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IexBaseExc.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfIO.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfIO.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStdIO.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStdIO.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfCompressor.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfCompressor.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfBoxAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfBoxAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChannelListAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChannelListAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChromaticitiesAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfChromaticitiesAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfCompressionAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfCompressionAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfDoubleAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfDoubleAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfEnvmapAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfEnvmapAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfFloatAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfFloatAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfIntAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfIntAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfKeyCode.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfKeyCode.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfKeyCodeAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfKeyCodeAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfLineOrderAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfLineOrderAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfMatrixAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfMatrixAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfOpaqueAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfOpaqueAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPreviewImage.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPreviewImage.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPreviewImageAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPreviewImageAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfRationalAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfRationalAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStringAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStringAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStringVectorAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfStringVectorAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTileDescriptionAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTileDescriptionAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTimeCode.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTimeCode.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTimeCodeAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTimeCodeAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfVecAttribute.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfVecAttribute.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadMutexWin32.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadMutexWin32.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadPool.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadPool.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfScanLineInputFile.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfScanLineInputFile.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTiledInputFile.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTiledInputFile.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfMisc.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfMisc.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadSemaphoreWin32.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadSemaphoreWin32.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IexThrowErrnoExc.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IexThrowErrnoExc.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfRleCompressor.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfRleCompressor.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfZipCompressor.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfZipCompressor.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPizCompressor.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPizCompressor.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPxr24Compressor.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfPxr24Compressor.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfB44Compressor.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfB44Compressor.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadWin32.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(IlmThreadWin32.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTiledMisc.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTiledMisc.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTileOffsets.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfTileOffsets.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfConvert.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfConvert.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfHuf.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>IlmImf.lib(ImfHuf.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>LIBCMTD.lib(dbgheap.obj) : error LNK2005: __heap_alloc は既に LIBCMT.lib(malloc.obj) で定義されています。
+     1>LIBCMTD.lib(dbgheap.obj) : error LNK2005: __msize は既に LIBCMT.lib(msize.obj) で定義されています。
+     1>LIBCMTD.lib(dbgheap.obj) : error LNK2005: __recalloc は既に LIBCMT.lib(recalloc.obj) で定義されています。
+     1>LIBCMTD.lib(isctype.obj) : error LNK2005: __isctype は既に LIBCMT.lib(isctype.obj) で定義されています。
+     1>LIBCMTD.lib(isctype.obj) : error LNK2005: __isctype_l は既に LIBCMT.lib(isctype.obj) で定義されています。
+     1>LIBCMTD.lib(dbghook.obj) : error LNK2005: __crt_debugger_hook は既に LIBCMT.lib(dbghook.obj) で定義されています。
+     1>libcpmt.lib(cerr.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>libcpmt.lib(cerr.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>libcpmt.lib(fiopen.obj) : error LNK2038: '_ITERATOR_DEBUG_LEVEL' の不一致が検出されました。値 '0' が 2 の値 'BMGC.obj' と一致しません。
+     1>libcpmt.lib(fiopen.obj) : error LNK2038: 'RuntimeLibrary' の不一致が検出されました。値 'MT_StaticRelease' が MTd_StaticDebug の値 'BMGC.obj' と一致しません。
+     1>LINK : warning LNK4098: defaultlib 'LIBCMT' は他のライブラリの使用と競合しています。/NODEFAULTLIB:library を使用してください。
+     1>LINK : warning LNK4098: defaultlib 'LIBCMTD' は他のライブラリの使用と競合しています。/NODEFAULTLIB:library を使用してください。
+     1>C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213\Debug\ConsoleApplication2.exe : fatal error LNK1169: 1 つ以上の複数回定義されているシンボルが見つかりました。
+     1>プロジェクト "C:\Users\shuji\Documents\Visual Studio 2012\Projects\DDM_20131213\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット) のビルドが終了しました -- 失敗。
+
+ビルドに失敗しました。
+
+経過時間 00:00:11.85
