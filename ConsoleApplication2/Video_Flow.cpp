@@ -103,27 +103,30 @@ vector<Shot> MakeSpeechAreaVector(char* filename);
 
 int main(){
 	int type;
-	cout << "モード選択" << endl << "1 : OpenCVDefaultFlow" << endl << "2 : CLFlow" << endl << "3 : OpenCVSampleFlow" << endl << "4 : CutFromText" << endl << "5 : SpeechDetection" << endl;
+	cout << "モード選択" << endl << "1 : CLFlow" << endl << "2 : OpticalFlowBasedCutandDefinePriority" <<  endl;
 	scanf("%d",&type);
+	cout << "ファイル名を入力してください" << endl;
+	char filename[30];
+	scanf("%s",filename);
 	switch (type)
 	{
 	case 1:
-		OpenCVDefaultFlow("test_data.mp4");
+		CLFlow(filename);
 		break;
 	case 2:
-		CLFlow("yoshida_mini_all.mp4");
+		OpticalFlowBasedCutandDefinePriority(filename);
 		break;
 	case 3:
 		OpenCVSampleFlow("test_data.mp4");
 		break;
 	case 4:
-		OpticalFlowBasedCutandDefinePriority("yoshida");
+		OpenCVDefaultFlow(filename);
 		break;
 	case 5:
-		DetectSpeechArea("yoshida");
+		DetectSpeechArea(filename);
 		break;
 	case 6:
-		MakeSpeechAreaVector("yoshida");
+		MakeSpeechAreaVector(filename);
 		break;
 	default:
 		break;
@@ -132,8 +135,10 @@ int main(){
 
 void OpenCVDefaultFlow(char *filename){
 
+	ostringstream moviefile;
+	moviefile  << "digestmeta\\" << filename << "\\" << filename << ".mp4";
 	// 動画ファイルの読み込み
-	VideoCapture capture = VideoCapture(filename);
+	VideoCapture capture = VideoCapture(moviefile.str().c_str());
 	// TV-L1アルゴリズムによるオプティカルフロー計算オブジェクトの生成
 	Ptr<DenseOpticalFlowExt> opticalFlow = superres::createOptFlow_DualTVL1();
 
@@ -241,8 +246,10 @@ void OpenCVDefaultFlow(char *filename){
 
 void CLFlow(char* filename){
 
+	ostringstream moviefile;
+	moviefile  << "digestmeta\\" << filename << "\\" << filename << ".mp4";
 	// 動画ファイルの読み込み
-	VideoCapture capture = VideoCapture(filename);
+	VideoCapture capture = VideoCapture(moviefile.str().c_str());
 	// TV-L1アルゴリズムによるオプティカルフロー計算オブジェクトの生成
 	Ptr<DenseOpticalFlowExt> opticalFlow = superres::createOptFlow_DualTVL1();
 
@@ -250,11 +257,13 @@ void CLFlow(char* filename){
 	Mat prev,curr;
 	capture >> prev;
 
-	FILE *output_hist;
-	output_hist = fopen("CLFlow_hist.txt", "w");
+//	FILE *output_hist;
+//	output_hist = fopen("CLFlow_hist.txt", "w");
 
 	FILE *output_sum;
-	output_sum = fopen("CLFlow_sum.txt", "w");
+	ostringstream oss_outsum;
+	oss_outsum  << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	output_sum = fopen(oss_outsum.str().c_str(), "w");
 
 	for (int count=0;;count++)
 	{
@@ -299,10 +308,12 @@ void CLFlow(char* filename){
 		}
 		fprintf(output_sum,"%d\n",opt_sum);
 
+		/*
 		for(int j=0;j<1000;j++){
 			fprintf(output_hist, "%d\t",opt_hist[j]);
 		}
 		fprintf(output_hist, "\n");
+		*/
 
 		curr.copyTo(prev);
 	}
