@@ -4,6 +4,9 @@
 #include<math.h>
 #include <iostream>
 #include <time.h>
+#include <direct.h>
+#include <sys/stat.h>
+
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/ocl/ocl.hpp>
@@ -542,21 +545,33 @@ int OpticalFlowBasedCutandDefinePriority(char* filename){
 
 		std::cout << (int)cut_areas[i].StartTime/60  << " : " << (int)cut_areas[i].StartTime%60 << " - " << (int)cut_areas[i].EndTime/60 << " : " << (int)cut_areas[i].EndTime%60 << endl;
 	}
+	cout << endl << endl;
 
-	DetectSpeechArea(filename);
+
+	ostringstream speechareafile;
+	speechareafile << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
+	std::ifstream ifs2(speechareafile.str().c_str());
+	if (ifs2.fail())
+	{
+		DetectSpeechArea(filename);
+	}
+
+	vector<Shot> speecharea = MakeSpeechAreaVector(filename);
+	vector<Shot> cut_areas_adjusted;
+
 	for each(Shot shot in cut_areas){
-		vector<Shot> speecharea = MakeSpeechAreaVector(filename);
-		shot = AdjustCutArea(shot,speecharea);
+		cut_areas_adjusted.push_back(AdjustCutArea(shot,speecharea));
 	}
 
 	for(int i=0;i<10;i++){
-		std::cout << (int)cut_areas[i].StartTime/60  << " : " << (int)cut_areas[i].StartTime%60 << " - " << (int)cut_areas[i].EndTime/60 << " : " << (int)cut_areas[i].EndTime%60 << endl;
+		std::cout << (int)cut_areas_adjusted[i].StartTime/60  << " : " << (int)cut_areas_adjusted[i].StartTime%60 << " - " << (int)cut_areas_adjusted[i].EndTime/60 << " : " << (int)cut_areas_adjusted[i].EndTime%60 << endl;
 	}
 	scanf("%s");
     return 0;
 }
 
 void DetectSpeechArea(char* filename){
+
 
 	int ret;
 	std::ostringstream makemonofile;

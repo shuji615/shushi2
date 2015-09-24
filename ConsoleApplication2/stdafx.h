@@ -30,4 +30,7 @@
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include <direct.h>
+#include <sys/stat.h>
+
 // TODO: プログラムに必要な追加ヘッダーをここで参照してください。
