@@ -6,6 +6,11 @@
 #include <time.h>
 #include <direct.h>
 #include <sys/stat.h>
+#include <fstream>
+#include <cstring>
+#include <iterator>
+#include <vector>
+#include <algorithm>
 
 
 #include <opencv2/opencv.hpp>
@@ -14,13 +19,8 @@
 #include <opencv2/superres/superres.hpp>
 #include <opencv2/core/core.hpp>        // coreモジュールのヘッダーをインクルード
 #include <opencv2/highgui/highgui.hpp>  // highguiモジュールのヘッダーをインクルード
-
-#include <fstream>
-#include <cstring>
-
-#include <iterator>
-#include <vector>
-#include <algorithm>
+#include <opencv2/video/tracking.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 
 #ifdef _DEBUG
@@ -54,27 +54,18 @@
 
 #define MAveWidth 100
 #define FPS 10.0
-
-
-#include <opencv2/video/tracking.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+#define Res 400
+#define FRAME 30000
+#define OpticalFlowUnCuttableRate 0.3
 
 #include "cv.h"
 #include "highgui.h"
-
 #include "stdafx.h"
 #include "OpticalFlowIO.h"
+
 using namespace std;
-
-#include <time.h>
-
-#define Res 400
-#define FRAME 30000
-
 using namespace cv;
 using namespace cv::superres;
-using namespace std;
-
 
 class Shot{
 public:
@@ -100,10 +91,14 @@ void DetectSpeechArea(char* filename);
 bool search_areas(Shot speecharea, double time);
 Shot AdjustCutArea(Shot input, vector<Shot> speecharea);
 vector<Shot> MakeSpeechAreaVector(char* filename);
+vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename);
 
 int main(){
 	int type;
-	cout << "モード選択" << endl << "1 : CLFlow" << endl << "2 : OpticalFlowBasedCutandDefinePriority" <<  endl;
+	cout << "モード選択" << endl;
+	cout << "1 : CLFlow" <<  endl;
+	cout << "2 : OpticalFlowBasedCutandDefinePriority" <<  endl;
+
 	scanf("%d",&type);
 	cout << "ファイル名を入力してください" << endl;
 	char filename[30];
@@ -112,9 +107,12 @@ int main(){
 	{
 	case 1:
 		CLFlow(filename);
+		//Ce Lue のオプティカルフローのアルゴリズムを使って，Username_CLFlow_sum.txt を生成
 		break;
 	case 2:
 		OpticalFlowBasedCutandDefinePriority(filename);
+		//Username_CLFlow_sum.txt があることを前提として，オプティカルフローベースのカット
+		//（発話区間はカットの瞬間にしないように処理）
 		break;
 	case 3:
 		OpenCVSampleFlow("test_data.mp4");
@@ -122,17 +120,383 @@ int main(){
 	case 4:
 		OpenCVDefaultFlow(filename);
 		break;
-	case 5:
-		DetectSpeechArea(filename);
-		break;
-	case 6:
-		MakeSpeechAreaVector(filename);
-		break;
 	default:
 		break;
 	}
 }
 
+
+
+void CLFlow(char* filename){
+
+	ostringstream moviefile;
+	moviefile  << "digestmeta\\" << filename << "\\" << filename << ".mp4";
+	// 動画ファイルの読み込み
+	VideoCapture capture = VideoCapture(moviefile.str().c_str());
+	// TV-L1アルゴリズムによるオプティカルフロー計算オブジェクトの生成
+	Ptr<DenseOpticalFlowExt> opticalFlow = superres::createOptFlow_DualTVL1();
+
+	// 前のフレームを保存しておく
+	Mat prev,curr;
+	capture >> prev;
+
+//	FILE *output_hist;
+//	output_hist = fopen("CLFlow_hist.txt", "w");
+
+	FILE *output_sum;
+	ostringstream oss_outsum;
+	oss_outsum  << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	output_sum = fopen(oss_outsum.str().c_str(), "w");
+
+	for (int count=0;;count++)
+	{
+		cout << "CLFlow Frame: " << count  << "\n";
+
+		int opt_hist[1000];
+		for(int i=0;i<1000;i++){
+			opt_hist[i]=0;
+		}
+
+		// 現在のフレームを保存
+		capture >> curr;
+
+		// 画像データ取得に失敗したらループを抜ける
+		if (curr.empty()) break;
+
+		////
+		OpticalFlowIO ofio;
+		DImage Im1,Im2,vx,vy,warp;
+
+		Im1.matimread(prev);
+		Im2.matimread(curr);
+
+		ofio.OpticalFlowIOMain(vx,vy,Im1,Im2,warp);
+
+		/*
+		DImage tmp;
+		std::ostringstream oss_;
+		oss_ << "arrow/arrow_" << count << ".jpg"; 
+		VisualizeDimageFlow(vx, vy, tmp, const_cast<char*>( oss_.str().c_str()) );
+		vx.imwrite("vx.jpg");
+		vy.imwrite("vy.jpg");
+		*/
+
+		int opt_sum=0;
+		for(int y = 0; y < vx.height(); ++y){
+			for(int x = 0; x < vx.width(); ++x){
+				int k = std::min(999,(int)(100*sqrt(pow(vx.pData[y*vx.width()+x],2) + pow(vy.pData[y*vx.width()+x],2))));
+				opt_hist[k]++;
+				opt_sum += k;
+			}
+		}
+		fprintf(output_sum,"%d\n",opt_sum);
+
+		/*
+		for(int j=0;j<1000;j++){
+			fprintf(output_hist, "%d\t",opt_hist[j]);
+		}
+		fprintf(output_hist, "\n");
+		*/
+
+		curr.copyTo(prev);
+	}
+
+}
+
+
+
+
+
+int OpticalFlowBasedCutandDefinePriority(char* filename){
+
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	std::ifstream ifs(oss.str().c_str());
+    if (ifs.fail())
+    {
+        std::cerr << "失敗" << std::endl;
+        return -1;
+    }
+ 
+	std::vector<double> RawData;
+	std::vector<double> MAveData;
+	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+	//MAveWidth 幅で平均化し，MAveDataに格納
+	//同時にMAveDataの平均の計算
+	double average=0;
+	for(int i=0;i<RawData.size()-MAveWidth;i++){
+		for(int j=0;j<MAveWidth;j++){
+			if(j==0){
+				MAveData.push_back(RawData[i+j]);
+			}else{
+				MAveData[i] += RawData[i+j];
+			}
+		}
+		MAveData[i] /= MAveWidth;
+		average += MAveData[i];
+	}
+	average /= MAveData.size();
+	const double THRE = 0.7 * average;
+
+	std::vector<Shot> Shots;
+	Shot tmp;
+
+	bool flag = false;
+	for(int i=0;i<MAveData.size();i++){
+		if(flag == true){
+			if(MAveData[i] < tmp.FlowMinValue){
+				tmp.FlowMinValue = MAveData[i];
+				tmp.FlowMinTime = (double)i/FPS;
+			}
+			if(MAveData[i] > THRE){
+				tmp.EndTime = (double)i/FPS;
+				Shots.push_back(tmp);
+
+				flag = false;
+			}
+		}else if(MAveData[i] < THRE){
+			tmp.StartTime = (double)i/FPS;
+			tmp.FlowMinTime = (double)i/FPS;
+			tmp.FlowMinValue = MAveData[i];
+
+			flag = true;
+		}
+	}
+	std::sort(Shots.begin(), Shots.end(), &Shot::cmp);
+
+	vector<Shot> cut_areas;
+
+	for(int i=0;i<10;i++){
+		Shot tmp;
+		tmp.StartTime = Shots[i].FlowMinTime;
+		tmp.EndTime = Shots[i].FlowMinTime + 10.0 ;
+		cut_areas.push_back(tmp);
+
+		std::cout << (int)cut_areas[i].StartTime/60  << " : " << (int)cut_areas[i].StartTime%60 << " - " << (int)cut_areas[i].EndTime/60 << " : " << (int)cut_areas[i].EndTime%60 << endl;
+	}
+	cout << endl << endl;
+
+
+	ostringstream speechareafile;
+	speechareafile << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
+	std::ifstream ifs2(speechareafile.str().c_str());
+	if (ifs2.fail())
+	{
+		DetectSpeechArea(filename);
+	}
+
+	vector<Shot> speecharea = MakeSpeechAreaVector(filename);
+	vector<Shot> cut_areas_adjusted;
+
+	for each(Shot shot in cut_areas){
+		cut_areas_adjusted.push_back(AdjustCutArea(shot,speecharea));
+	}
+
+	for(int i=0;i<10;i++){
+		std::cout << (int)cut_areas_adjusted[i].StartTime/60  << " : " << (int)cut_areas_adjusted[i].StartTime%60 << " - " << (int)cut_areas_adjusted[i].EndTime/60 << " : " << (int)cut_areas_adjusted[i].EndTime%60 << endl;
+	}
+	scanf("%s");
+    return 0;
+}
+
+void DetectSpeechArea(char* filename){
+
+	FILE *areafileexisttest;
+	std::ostringstream speechareafile;
+	speechareafile << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
+	if ( (areafileexisttest = fopen(speechareafile.str().c_str(),"r")) != NULL ){
+		fclose( areafileexisttest );
+		// ファイルが存在するので何もしない
+
+	}
+	else{
+		// ファイルは存在しないので作る
+
+		int ret;
+		std::ostringstream makemonofile,monofilename;
+		monofilename << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+
+		FILE *fileexisttest;
+		if ( (fileexisttest = fopen(monofilename.str().c_str(),"r")) != NULL ){
+			fclose( fileexisttest );
+			// ファイルが存在する
+		}
+		else{
+			makemonofile << "ffmpeg -i digestmeta\\" << filename << "\\" << filename << ".mp4";
+			makemonofile << " -ac 1 digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+			ret = system(makemonofile.str().c_str());
+			if (ret != 0){
+				printf("モノラルファイル作成失敗\n");
+			}
+		}
+
+		FILE *filelist;
+		std::ostringstream filelist_name;
+		filelist_name << "digestmeta\\" << filename << "\\" << filename << "_filelist.txt";
+
+		std::ostringstream filelist_contents;
+		filelist_contents << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+
+		filelist = fopen(filelist_name.str().c_str(), "w");
+		fprintf(filelist,filelist_contents.str().c_str());
+		fclose(filelist);
+
+		std::ostringstream run_adintool;
+		run_adintool << "adintool.exe -in file -filelist " << filelist_name.str().c_str() << " -out file -filename adintool_result\\ -freq 48000 -headmargin 1000 -tailmargin 1000 -lv 15000 > ";
+		run_adintool << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
+		ret = system(run_adintool.str().c_str());
+		if (ret != 0){
+			printf("Adintool起動失敗\n");
+		}
+	}
+}
+
+bool search_areas(Shot inputshot, double time){
+	//timeがinputshotの中にあるかどうか調べる
+
+	if(inputshot.StartTime<time && time<inputshot.EndTime){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+Shot AdjustCutArea(Shot adjustingarea, vector<Shot> continuityareas){
+	//adjustingarea のstartとendが continuityareas のどこかに入っているかどうか調べて，
+	//入っていれば，入っている continuityarea のstart/end まで幅を広げてshotを返す
+
+	Shot out;
+	double starttime = adjustingarea.StartTime;
+	double endtime = adjustingarea.EndTime;
+	out.StartTime = starttime;
+	out.EndTime = endtime;
+
+	for(int i=0;i<continuityareas.size();i++){
+		if(search_areas(continuityareas[i],starttime) == true){
+			out.StartTime = continuityareas[i].StartTime;
+			break;
+		}
+	}
+	for(int i=0;i<continuityareas.size();i++){
+		if(search_areas(continuityareas[i],endtime) == true){
+			out.EndTime = continuityareas[i].EndTime;
+			break;
+		}
+	}
+	return out;
+}
+
+vector<Shot> MakeSpeechAreaVector(char* filename){
+	vector<Shot> out;
+	Shot tmp;
+	
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
+
+    ifstream file(oss.str().c_str());
+	string temp;
+    vector<string> items;
+
+	while(getline(file, temp, '['))
+    {
+        items.push_back(temp);
+    }
+	for(int i=0;i<items.size();i++){
+		if(i>0){
+			char s2[] = "(s)";
+			char *tok;
+			char *end;
+
+			tok = strtok( (char*)items[i].c_str(), s2 );
+			for(int j=0;j<4 && tok!=NULL;j++){
+				if(j==1){
+					tmp.StartTime = strtod(tok,&end);
+				}
+				if(j==3){
+					tmp.EndTime = strtod(tok,&end);
+				}
+				tok = strtok( NULL, s2 );
+			}
+			out.push_back(tmp);
+		}
+	}
+	return out;	
+}
+
+vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename){
+	vector<Shot> out;
+	Shot tmp;
+	double tmp_starttime,tmp_endtime;
+
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	std::ifstream ifs(oss.str().c_str());
+    if (ifs.fail())
+    {
+        std::cerr << "失敗" << std::endl;
+    }
+ 
+	std::vector<double> RawData;
+	std::vector<double> MAveData;
+	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+	//MAveWidth 幅で平均化し，MAveDataに格納
+	//同時にMAveDataの平均の計算
+	double average=0;
+	for(int i=0;i<RawData.size()-MAveWidth;i++){
+		for(int j=0;j<MAveWidth;j++){
+			if(j==0){
+				MAveData.push_back(RawData[i+j]);
+			}else{
+				MAveData[i] += RawData[i+j];
+			}
+		}
+		MAveData[i] /= MAveWidth;
+		average += MAveData[i];
+	}
+	average /= MAveData.size();
+	const double THRE =  OpticalFlowUnCuttableRate * average;
+
+	bool flag = false;
+	for(int i=0;i<MAveData.size();i++){
+		if(flag == true){
+			if(MAveData[i] > THRE){
+				tmp.EndTime = (double)i/FPS;
+				out.push_back(tmp);
+
+				flag = false;
+			}
+		}else if(MAveData[i] < THRE){
+			tmp.StartTime = (double)i/FPS;
+
+			flag = true;
+		}
+	}
+
+	return out;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//以下，OpenCVのデフォルト関数を用いたオプティカルフローの計算
+//なぜかピークが現れた
 void OpenCVDefaultFlow(char *filename){
 
 	ostringstream moviefile;
@@ -243,83 +607,6 @@ void OpenCVDefaultFlow(char *filename){
 
 	}
 }
-
-void CLFlow(char* filename){
-
-	ostringstream moviefile;
-	moviefile  << "digestmeta\\" << filename << "\\" << filename << ".mp4";
-	// 動画ファイルの読み込み
-	VideoCapture capture = VideoCapture(moviefile.str().c_str());
-	// TV-L1アルゴリズムによるオプティカルフロー計算オブジェクトの生成
-	Ptr<DenseOpticalFlowExt> opticalFlow = superres::createOptFlow_DualTVL1();
-
-	// 前のフレームを保存しておく
-	Mat prev,curr;
-	capture >> prev;
-
-//	FILE *output_hist;
-//	output_hist = fopen("CLFlow_hist.txt", "w");
-
-	FILE *output_sum;
-	ostringstream oss_outsum;
-	oss_outsum  << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
-	output_sum = fopen(oss_outsum.str().c_str(), "w");
-
-	for (int count=0;;count++)
-	{
-		cout << "CLFlow Frame: " << count  << "\n";
-
-		int opt_hist[1000];
-		for(int i=0;i<1000;i++){
-			opt_hist[i]=0;
-		}
-
-		// 現在のフレームを保存
-		capture >> curr;
-
-		// 画像データ取得に失敗したらループを抜ける
-		if (curr.empty()) break;
-
-		////
-		OpticalFlowIO ofio;
-		DImage Im1,Im2,vx,vy,warp;
-
-		Im1.matimread(prev);
-		Im2.matimread(curr);
-
-		ofio.OpticalFlowIOMain(vx,vy,Im1,Im2,warp);
-
-		/*
-		DImage tmp;
-		std::ostringstream oss_;
-		oss_ << "arrow/arrow_" << count << ".jpg"; 
-		VisualizeDimageFlow(vx, vy, tmp, const_cast<char*>( oss_.str().c_str()) );
-		vx.imwrite("vx.jpg");
-		vy.imwrite("vy.jpg");
-		*/
-
-		int opt_sum=0;
-		for(int y = 0; y < vx.height(); ++y){
-			for(int x = 0; x < vx.width(); ++x){
-				int k = std::min(999,(int)(100*sqrt(pow(vx.pData[y*vx.width()+x],2) + pow(vy.pData[y*vx.width()+x],2))));
-				opt_hist[k]++;
-				opt_sum += k;
-			}
-		}
-		fprintf(output_sum,"%d\n",opt_sum);
-
-		/*
-		for(int j=0;j<1000;j++){
-			fprintf(output_hist, "%d\t",opt_hist[j]);
-		}
-		fprintf(output_hist, "\n");
-		*/
-
-		curr.copyTo(prev);
-	}
-
-}
-
 
 // convert flow (vx, vy) into color image
 void VisualizeDimageFlow(DImage & vx, DImage & vy, DImage & flow, char* filename)
@@ -485,198 +772,4 @@ int OpenCVSampleFlow(char* filename)
 	}
 	next.copyTo(prev);
 
-}
-
-
-int OpticalFlowBasedCutandDefinePriority(char* filename){
-
-	ostringstream oss;
-	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
-	std::ifstream ifs(oss.str().c_str());
-    if (ifs.fail())
-    {
-        std::cerr << "失敗" << std::endl;
-        return -1;
-    }
- 
-	std::vector<double> RawData;
-	std::vector<double> MAveData;
-	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
-
-	//MAveWidth 幅で平均化し，MAveDataに格納
-	//同時にMAveDataの平均の計算
-	double average=0;
-	for(int i=0;i<RawData.size()-MAveWidth;i++){
-		for(int j=0;j<MAveWidth;j++){
-			if(j==0){
-				MAveData.push_back(RawData[i+j]);
-			}else{
-				MAveData[i] += RawData[i+j];
-			}
-		}
-		MAveData[i] /= MAveWidth;
-		average += MAveData[i];
-	}
-	average /= MAveData.size();
-	const double THRE = 0.7 * average;
-
-	std::vector<Shot> Shots;
-	Shot tmp;
-
-	bool flag = false;
-	for(int i=0;i<MAveData.size();i++){
-		if(flag == true){
-			if(MAveData[i] < tmp.FlowMinValue){
-				tmp.FlowMinValue = MAveData[i];
-				tmp.FlowMinTime = (double)i/FPS;
-			}
-			if(MAveData[i] > THRE){
-				tmp.EndTime = (double)i/FPS;
-				Shots.push_back(tmp);
-
-				flag = false;
-			}
-		}else if(MAveData[i] < THRE){
-			tmp.StartTime = (double)i/FPS;
-			tmp.FlowMinTime = (double)i/FPS;
-			tmp.FlowMinValue = MAveData[i];
-
-			flag = true;
-		}
-	}
-	std::sort(Shots.begin(), Shots.end(), &Shot::cmp);
-
-	vector<Shot> cut_areas;
-
-	for(int i=0;i<10;i++){
-		Shot tmp;
-		tmp.StartTime = Shots[i].FlowMinTime;
-		tmp.EndTime = Shots[i].FlowMinTime + 10.0 ;
-		cut_areas.push_back(tmp);
-
-		std::cout << (int)cut_areas[i].StartTime/60  << " : " << (int)cut_areas[i].StartTime%60 << " - " << (int)cut_areas[i].EndTime/60 << " : " << (int)cut_areas[i].EndTime%60 << endl;
-	}
-	cout << endl << endl;
-
-
-	ostringstream speechareafile;
-	speechareafile << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
-	std::ifstream ifs2(speechareafile.str().c_str());
-	if (ifs2.fail())
-	{
-		DetectSpeechArea(filename);
-	}
-
-	vector<Shot> speecharea = MakeSpeechAreaVector(filename);
-	vector<Shot> cut_areas_adjusted;
-
-	for each(Shot shot in cut_areas){
-		cut_areas_adjusted.push_back(AdjustCutArea(shot,speecharea));
-	}
-
-	for(int i=0;i<10;i++){
-		std::cout << (int)cut_areas_adjusted[i].StartTime/60  << " : " << (int)cut_areas_adjusted[i].StartTime%60 << " - " << (int)cut_areas_adjusted[i].EndTime/60 << " : " << (int)cut_areas_adjusted[i].EndTime%60 << endl;
-	}
-	scanf("%s");
-    return 0;
-}
-
-void DetectSpeechArea(char* filename){
-
-
-	int ret;
-	std::ostringstream makemonofile;
-	makemonofile << "ffmpeg -i digestmeta\\" << filename << "\\" << filename << ".wav";
-	makemonofile << " -ac 1 digestmeta\\" << filename << "\\" << filename << "_mono.wav";
-	ret = system(makemonofile.str().c_str());
-	if (ret != 0){
-		printf("モノラルファイル作成失敗\n");
-	}
-
-	FILE *filelist;
-	std::ostringstream filelist_name;
-	filelist_name << "digestmeta\\" << filename << "\\" << filename << "_filelist.txt";
-
-	std::ostringstream filelist_contents;
-	filelist_contents << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
-
-	filelist = fopen(filelist_name.str().c_str(), "w");
-	fprintf(filelist,filelist_contents.str().c_str());
-	fclose(filelist);
-
-	std::ostringstream run_adintool;
-	run_adintool << "adintool.exe -in file -filelist " << filelist_name.str().c_str() << " -out file -filename adintool_result\\ -freq 48000 -headmargin 1000 -tailmargin 1000 -lv 15000 > ";
-	run_adintool << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
-	ret = system(run_adintool.str().c_str());
-	if (ret != 0){
-		printf("Adintool起動失敗\n");
-	}
-}
-
-
-bool search_areas(Shot speecharea, double time){
-	if(speecharea.StartTime<time && time<speecharea.EndTime){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-Shot AdjustCutArea(Shot input, vector<Shot> speecharea){
-	Shot out;
-	double starttime = input.StartTime;
-	double endtime = input.EndTime;
-	out.StartTime = starttime;
-	out.EndTime = endtime;
-
-	for(int i=0;i<speecharea.size();i++){
-		if(search_areas(speecharea[i],starttime) == true){
-			out.StartTime = speecharea[i].StartTime;
-			break;
-		}
-	}
-	for(int i=0;i<speecharea.size();i++){
-		if(search_areas(speecharea[i],endtime) == true){
-			out.EndTime = speecharea[i].EndTime;
-			break;
-		}
-	}
-	return out;
-}
-
-vector<Shot> MakeSpeechAreaVector(char* filename){
-	vector<Shot> out;
-	Shot tmp;
-	
-	ostringstream oss;
-	oss << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
-
-    ifstream file(oss.str().c_str());
-	string temp;
-    vector<string> items;
-
-	while(getline(file, temp, '['))
-    {
-        items.push_back(temp);
-    }
-	for(int i=0;i<items.size();i++){
-		if(i>0){
-			char s2[] = "(s)";
-			char *tok;
-			char *end;
-
-			tok = strtok( (char*)items[i].c_str(), s2 );
-			for(int j=0;j<4 && tok!=NULL;j++){
-				if(j==1){
-					tmp.StartTime = strtod(tok,&end);
-				}
-				if(j==3){
-					tmp.EndTime = strtod(tok,&end);
-				}
-				tok = strtok( NULL, s2 );
-			}
-			out.push_back(tmp);
-		}
-	}
-	return out;	
 }
