@@ -57,6 +57,7 @@
 #define Res 400
 #define FRAME 30000
 #define OpticalFlowUnCuttableRate 0.3
+#define SpeechInterval 1.85
 
 #include "cv.h"
 #include "highgui.h"
@@ -92,6 +93,7 @@ bool search_areas(Shot speecharea, double time);
 Shot AdjustCutArea(Shot input, vector<Shot> speecharea);
 vector<Shot> MakeSpeechAreaVector(char* filename);
 vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename);
+int SoundBasedAreaCut(char* filename);
 
 int main(){
 	int type;
@@ -204,9 +206,6 @@ void CLFlow(char* filename){
 }
 
 
-
-
-
 int OpticalFlowBasedCutandDefinePriority(char* filename){
 
 	ostringstream oss;
@@ -214,8 +213,7 @@ int OpticalFlowBasedCutandDefinePriority(char* filename){
 	std::ifstream ifs(oss.str().c_str());
     if (ifs.fail())
     {
-        std::cerr << "失敗" << std::endl;
-        return -1;
+		CLFlow(filename);
     }
  
 	std::vector<double> RawData;
@@ -434,7 +432,7 @@ vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename){
 	std::ifstream ifs(oss.str().c_str());
     if (ifs.fail())
     {
-        std::cerr << "失敗" << std::endl;
+		CLFlow(filename);
     }
  
 	std::vector<double> RawData;
@@ -477,7 +475,30 @@ vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename){
 	return out;
 }
 
+int SoundBasedAreaCut(char* filename){
 
+	ostringstream speechareafile;
+	speechareafile << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
+	std::ifstream ifs2(speechareafile.str().c_str());
+	if (ifs2.fail())
+	{
+		DetectSpeechArea(filename);
+	}
+	vector<Shot> speecharea = MakeSpeechAreaVector(filename);
+
+	//発話間隔が1.85秒以内だったら，一つにつなげる
+	for(int i=0;i<speecharea.size()-1;i++){
+		if( (speecharea[i+1].StartTime - speecharea[i].EndTime) < SpeechInterval){
+			speecharea[i].EndTime = speecharea[i+1].EndTime;
+			speecharea.erase(speecharea.begin()+i+1);
+		}
+	}
+
+	//Priorityを音量から定義する
+
+
+	//CLFlow_sumから，あまりに動きが大きいところは区間から除外するようにする
+}
 
 
 
