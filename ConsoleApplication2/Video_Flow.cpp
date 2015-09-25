@@ -63,6 +63,7 @@
 #include "highgui.h"
 #include "stdafx.h"
 #include "OpticalFlowIO.h"
+#include "wave.h"
 
 using namespace std;
 using namespace cv;
@@ -94,6 +95,8 @@ Shot AdjustCutArea(Shot input, vector<Shot> speecharea);
 vector<Shot> MakeSpeechAreaVector(char* filename);
 vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename);
 int SoundBasedAreaCut(char* filename);
+vector<short> readwave(char* filename);
+int samplingrateofwave(char* filename);
 
 int main(){
 	int type;
@@ -475,6 +478,63 @@ vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename){
 	return out;
 }
 
+vector<short> readwave(char* filename)
+{
+    WAVE          wav1;
+    WAVE_FORMAT   fmt1;
+    vector<short> ch1,ch2,chMix;
+        
+    //ファイルから読み込み
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+    wav1.load_from_file((char*)oss.str().c_str());
+    
+    //フォーマット情報とデータを取り出す
+    fmt1=wav1.get_format();
+    wav1.get_channel(ch1,0);
+    
+    //フォーマット情報表示
+	/*
+    cout<<endl;
+    cout<<"format id       = "<<fmt1.format_id      <<endl;
+    cout<<"channels        = "<<fmt1.num_of_channels<<"\t[Ch]"<<endl;
+    cout<<"sampling rate   = "<<fmt1.samples_per_sec<<"\t[Hz]"<<endl;
+    cout<<"bytes per sec   = "<<fmt1.bytes_per_sec  <<"\t[bytes/sec]"<<endl;
+    cout<<"block size      = "<<fmt1.block_size     <<"\t[bytes]"<<endl;
+    cout<<"bits per sample = "<<fmt1.bits_per_sample<<"\t[bits/sample]"<<endl;
+    cout<<endl;
+	*/
+    
+	if(fmt1.num_of_channels == 2){
+		for(int i=0;i<ch1.size();i++){
+			chMix.push_back(ch1[i]+ch2[i]);
+		}
+	}else{
+		for(int i=0;i<ch1.size();i++){
+			chMix.push_back(ch1[i]);
+		}
+	}
+	return chMix;
+}
+
+int samplingrateofwave(char* filename)
+{
+    WAVE          wav1;
+    WAVE_FORMAT   fmt1;
+    vector<short> ch1,ch2,chMix;
+        
+    //ファイルから読み込み
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+    wav1.load_from_file((char*)oss.str().c_str());
+    
+    //フォーマット情報とデータを取り出す
+    fmt1=wav1.get_format();
+    wav1.get_channel(ch1,0);
+    
+	return fmt1.samples_per_sec;
+}
+
 int SoundBasedAreaCut(char* filename){
 
 	ostringstream speechareafile;
@@ -495,10 +555,18 @@ int SoundBasedAreaCut(char* filename){
 	}
 
 	//Priorityを音量から定義する
+	vector<short> videovolume = readwave(filename);
+	const int Samplingrate = samplingrateofwave(filename);
+	/////ここまで
 
 
 	//CLFlow_sumから，あまりに動きが大きいところは区間から除外するようにする
 }
+
+
+
+
+
 
 
 
@@ -794,3 +862,4 @@ int OpenCVSampleFlow(char* filename)
 	next.copyTo(prev);
 
 }
+

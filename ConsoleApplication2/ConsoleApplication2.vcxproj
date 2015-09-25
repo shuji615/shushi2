@@ -168,6 +168,7 @@
     <ClCompile Include="Stochastic.cpp" />
     <ClCompile Include="TestOpticalFlow.cpp" />
     <ClCompile Include="Video_Flow.cpp" />
+    <ClCompile Include="wave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="block.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vector.h" />
+    <ClInclude Include="wave.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ConsoleApplication2.rc" />
