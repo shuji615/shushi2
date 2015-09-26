@@ -58,6 +58,8 @@
 #define FRAME 30000
 #define OpticalFlowUnCuttableRate 0.3
 #define SpeechInterval 1.85
+#define VolumeSmoothRange 1
+#define VolumeAveRange 0.1//秒単位
 
 #include "cv.h"
 #include "highgui.h"
@@ -75,11 +77,17 @@ public:
 	double EndTime;
 	double FlowMinTime;
 	double FlowMinValue;
+	double VolumeAverage;
 	
 	// 比較関数
-    static bool cmp(Shot a, Shot b)
+    static bool flow_cmp(Shot a, Shot b)
     {
 		return (a.FlowMinValue < b.FlowMinValue); 
+    } 
+
+	static bool volume_cmp(Shot a, Shot b)
+    {
+		return (a.VolumeAverage > b.VolumeAverage); 
     } 
 };
 
@@ -97,6 +105,9 @@ vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename);
 int SoundBasedAreaCut(char* filename);
 vector<short> readwave(char* filename);
 int samplingrateofwave(char* filename);
+vector<double> CalcMoveAve(vector<double> inputvector, int Range);
+vector<double> CalcMoveAve(vector<short> inputvector, int Range);
+vector<double> CalcAve(vector<short> inputvector, int Range);
 
 int main(){
 	int type;
@@ -124,6 +135,9 @@ int main(){
 		break;
 	case 4:
 		OpenCVDefaultFlow(filename);
+		break;
+	case 5:
+		SoundBasedAreaCut(filename);
 		break;
 	default:
 		break;
@@ -264,7 +278,7 @@ int OpticalFlowBasedCutandDefinePriority(char* filename){
 			flag = true;
 		}
 	}
-	std::sort(Shots.begin(), Shots.end(), &Shot::cmp);
+	std::sort(Shots.begin(), Shots.end(), &Shot::flow_cmp);
 
 	vector<Shot> cut_areas;
 
@@ -504,6 +518,8 @@ vector<short> readwave(char* filename)
     cout<<"bits per sample = "<<fmt1.bits_per_sample<<"\t[bits/sample]"<<endl;
     cout<<endl;
 	*/
+
+	double max=0,min=0;
     
 	if(fmt1.num_of_channels == 2){
 		for(int i=0;i<ch1.size();i++){
@@ -556,17 +572,69 @@ int SoundBasedAreaCut(char* filename){
 
 	//Priorityを音量から定義する
 	vector<short> videovolume = readwave(filename);
-	const int Samplingrate = samplingrateofwave(filename);
-	/////ここまで
+	const int SamplingRate = samplingrateofwave(filename);
+
+	vector<double> videovolume_ave = CalcAve(videovolume,SamplingRate*VolumeAveRange);
+
+//	vector<double> videovolume_mave = CalcMoveAve(videovolume,SamplingRate*VolumeSmoothRange);
+//	vector<double> videovolume_mave_twice = CalcMoveAve(videovolume_mave,SamplingRate*VolumeSmoothRange);
+
+	for(int j=0;j<speecharea.size();j++){
+		double volume = 0;
+		for(int i = (speecharea[j].StartTime / VolumeAveRange );i<(speecharea[j].EndTime / VolumeAveRange)-1 ; i++){
+			volume += abs( videovolume_ave[i] - videovolume_ave[i+1] ) ; 
+		}
+		speecharea[j].VolumeAverage =  volume / (speecharea[j].EndTime - speecharea[j].StartTime) / SamplingRate; 
+	}
+	//ボリュームが大きい順にソート
+	std::sort(speecharea.begin(), speecharea.end(), &Shot::volume_cmp);
 
 
 	//CLFlow_sumから，あまりに動きが大きいところは区間から除外するようにする
+	return 0;
 }
 
+vector<double> CalcMoveAve(vector<double> inputvector, int Range){
+	vector<double> MoveAveResult;
+	for(int i=0;i<inputvector.size();i++){
+		double tmp=0;
+		double counter=0;
+		for(int j = std::min(i-Range,0) ; j<i+Range && j<inputvector.size() ;j++){
+			tmp += inputvector[j];
+			counter++;
+		}
+		MoveAveResult.push_back(tmp/counter);
+	}
+	return MoveAveResult;
+}
 
+vector<double> CalcMoveAve(vector<short> inputvector, int Range){
+	vector<double> MoveAveResult;
+	for(int i=0;i<inputvector.size();i++){
+		double tmp=0;
+		double counter=0;
+		for(int j = std::min(i-Range,0) ; j<i+Range && j<inputvector.size() ;j++){
+			tmp += inputvector[j];
+			counter++;
+		}
+		MoveAveResult.push_back(tmp/counter);
+	}
+	return MoveAveResult;
+}
 
-
-
+vector<double> CalcAve(vector<short> inputvector, int Range){
+	vector<double> AveResult;
+	double tmp=0;
+	int counter=0;
+	for(int i=0;i<inputvector.size();i++){
+		tmp += abs(inputvector[i]);
+		if( (i+1)%Range == 0 || i == inputvector.size()-1 ){
+			AveResult.push_back(tmp);
+			tmp = 0;
+		}
+	}
+	return AveResult;
+}
 
 
 
