@@ -108,6 +108,7 @@ int samplingrateofwave(char* filename);
 vector<double> CalcMoveAve(vector<double> inputvector, int Range);
 vector<double> CalcMoveAve(vector<short> inputvector, int Range);
 vector<double> CalcAve(vector<short> inputvector, int Range);
+double ClacOpticalFlowMoveDirection(DImage vx, DImage vy);
 
 int main(){
 	int type;
@@ -167,6 +168,11 @@ void CLFlow(char* filename){
 	oss_outsum  << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
 	output_sum = fopen(oss_outsum.str().c_str(), "w");
 
+	FILE *output_direction;
+	ostringstream oss_direction;
+	oss_direction  << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_direction.txt";
+	output_direction = fopen(oss_direction.str().c_str(), "w");
+
 	for (int count=0;;count++)
 	{
 		cout << "CLFlow Frame: " << count  << "\n";
@@ -210,6 +216,8 @@ void CLFlow(char* filename){
 		}
 		fprintf(output_sum,"%d\n",opt_sum);
 
+		fprintf(output_direction,"%lf\n",ClacOpticalFlowMoveDirection(vx,vy));
+		
 		/*
 		for(int j=0;j<1000;j++){
 			fprintf(output_hist, "%d\t",opt_hist[j]);
@@ -589,7 +597,6 @@ int SoundBasedAreaCut(char* filename){
 	//ボリュームが大きい順にソート
 	std::sort(speecharea.begin(), speecharea.end(), &Shot::volume_cmp);
 
-
 	//CLFlow_sumから，あまりに動きが大きいところは区間から除外するようにする
 	return 0;
 }
@@ -636,7 +643,17 @@ vector<double> CalcAve(vector<short> inputvector, int Range){
 	return AveResult;
 }
 
-
+double ClacOpticalFlowMoveDirection(DImage vx, DImage vy){
+	double S = 0, Tx = 0, Ty = 0;
+	for(int y = 0; y < vx.height(); ++y){
+		for(int x = 0; x < vx.width(); ++x){
+			S += sqrt(pow(vx.pData[y*vx.width()+x],2) + pow(vy.pData[y*vx.width()+x],2));
+			Tx += vx.pData[y*vx.width()+x];
+			Ty += vy.pData[y*vx.width()+x];
+		}
+	}
+	return sqrt(pow(Tx,2) + pow(Ty,2)) / S;
+}
 
 
 
