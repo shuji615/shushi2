@@ -105,7 +105,7 @@ void CLFlow(char *filename);
 void VisualizeDimageFlow(DImage & vx, DImage & vy, DImage & flow, char* filename);
 int OpenCVSampleFlow(char* filename);
 vector<Shot> OpticalFlowBasedCut(char* filename);
-int OpticalFlowBasedCutandDefinePriority(char* filename);
+int OpticalFlowBasedCutandAdjustShots(char* filename);
 void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval);
 bool search_areas(Shot speecharea, double time);
 void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &continuityareas);
@@ -120,7 +120,7 @@ vector<double> CalcAve(vector<short> inputvector, int Range);
 double ClacOpticalFlowMoveDirection(DImage vx, DImage vy);
 void CalcFlowAve(vector<Shot> &speecharea, char* filename);
 void CalcVolumeAve(vector<Shot> &shots, char* filename);
-void CalcPriorityofShots(vector<Shot> &shots,char* filename, double volume_ratio, double optflow_ratio);
+void CalcShotPriority(vector<Shot> &shots,char* filename, double volume_ratio, double optflow_ratio);
 
 int main(){
 	int type;
@@ -317,7 +317,7 @@ vector<Shot> OpticalFlowBasedCut(char* filename){
 	return OpticalFlowMinArea;
 }
 
-int OpticalFlowBasedCutandDefinePriority(char* filename){
+int OpticalFlowBasedCutandAdjustShots(char* filename){
 
 	//オプティカルフローをベースにショットを作成
 	vector<Shot> OpticalFlowMinArea =OpticalFlowBasedCut(filename);
@@ -709,7 +709,7 @@ void CalcVolumeAve(vector<Shot> &shots, char* filename){
 	}
 }
 
-void CalcPriorityofShots(vector<Shot> &shots,char* filename, double volume_ratio, double optflow_ratio){
+void CalcShotPriority(vector<Shot> &shots,char* filename, double volume_ratio, double optflow_ratio){
 	CalcFlowAve(shots,filename);
 	CalcVolumeAve(shots,filename);
 }
