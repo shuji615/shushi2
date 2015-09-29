@@ -60,6 +60,7 @@
 #define SpeechInterval 1.85
 #define VolumeSmoothRange 1
 #define VolumeAveRange 0.1//秒単位
+#define FLOWTHRE 4500000
 
 #include "cv.h"
 #include "highgui.h"
@@ -78,6 +79,8 @@ public:
 	double FlowMinTime;
 	double FlowMinValue;
 	double VolumeAverage;
+	double FlowAve;
+	bool ExclusionFlag;
 	
 	// 比較関数
     static bool flow_cmp(Shot a, Shot b)
@@ -89,6 +92,8 @@ public:
     {
 		return (a.VolumeAverage > b.VolumeAverage); 
     } 
+
+	void set_FlowAve(double in){FlowAve = in;}
 };
 
 
@@ -109,6 +114,7 @@ vector<double> CalcMoveAve(vector<double> inputvector, int Range);
 vector<double> CalcMoveAve(vector<short> inputvector, int Range);
 vector<double> CalcAve(vector<short> inputvector, int Range);
 double ClacOpticalFlowMoveDirection(DImage vx, DImage vy);
+void CalcFlowAve(vector<Shot> &speecharea, char* filename);
 
 int main(){
 	int type;
@@ -295,7 +301,7 @@ int OpticalFlowBasedCutandDefinePriority(char* filename){
 		tmp.StartTime = Shots[i].FlowMinTime;
 		tmp.EndTime = Shots[i].FlowMinTime + 10.0 ;
 		cut_areas.push_back(tmp);
-
+		
 		std::cout << (int)cut_areas[i].StartTime/60  << " : " << (int)cut_areas[i].StartTime%60 << " - " << (int)cut_areas[i].EndTime/60 << " : " << (int)cut_areas[i].EndTime%60 << endl;
 	}
 	cout << endl << endl;
@@ -366,7 +372,7 @@ void DetectSpeechArea(char* filename){
 		fclose(filelist);
 
 		std::ostringstream run_adintool;
-		run_adintool << "adintool.exe -in file -filelist " << filelist_name.str().c_str() << " -out file -filename adintool_result\\ -freq 48000 -headmargin 1000 -tailmargin 1000 -lv 15000 > ";
+		run_adintool << "adintool.exe -in file -filelist " << filelist_name.str().c_str() << " -out file -filename adintool_result\\ -freq 48000 -headmargin 1850 -tailmargin 1850 -lv 12000 > ";
 		run_adintool << "digestmeta\\" << filename << "\\" << filename << "_speechareas.txt";
 		ret = system(run_adintool.str().c_str());
 		if (ret != 0){
@@ -594,10 +600,50 @@ int SoundBasedAreaCut(char* filename){
 		}
 		speecharea[j].VolumeAverage =  volume / (speecharea[j].EndTime - speecharea[j].StartTime) / SamplingRate; 
 	}
+
 	//ボリュームが大きい順にソート
 	std::sort(speecharea.begin(), speecharea.end(), &Shot::volume_cmp);
 
 	//CLFlow_sumから，あまりに動きが大きいところは区間から除外するようにする
+
+	CalcFlowAve(speecharea,filename);
+
+	/*
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	std::ifstream ifs(oss.str().c_str());
+	if (ifs.fail())
+	{
+		CLFlow(filename);
+	}
+
+	std::vector<double> RawData;
+	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+	for(int j=0;j<speecharea.size();j++){
+		double tmp=0;
+		for(int i=speecharea[j].StartTime*FPS;i<speecharea[j].EndTime*FPS;i++){
+			tmp += RawData[i];
+		}
+		speecharea[j].FlowAve = tmp / ( ( speecharea[j].EndTime - speecharea[j].StartTime ) * FPS );
+	}
+	*/
+
+
+	for(auto shot = speecharea.begin() ; shot !=speecharea.end() ; ){
+		if(shot->FlowAve > FLOWTHRE){
+			speecharea.erase(shot);
+		}else{
+			shot++;
+		}
+	}
+
+	for(int i=0;i<10;i++){
+		ostringstream oss_tmp;
+		oss_tmp << "ffmpeg -i " << "digestmeta\\" << filename << "\\" << filename << ".mp4 -ss " << speecharea[i].StartTime-2 << " -t " << speecharea[i].EndTime - speecharea[i].StartTime + 2 << " digestmeta\\" << filename << "\\speechscenes\\" << filename << "_" << i << ".mp4" << endl;
+		system(oss_tmp.str().c_str());
+	}
+
 	return 0;
 }
 
@@ -654,6 +700,46 @@ double ClacOpticalFlowMoveDirection(DImage vx, DImage vy){
 	}
 	return sqrt(pow(Tx,2) + pow(Ty,2)) / S;
 }
+
+void CalcFlowAve(vector<Shot> &speecharea, char* filename){
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	std::ifstream ifs(oss.str().c_str());
+	if (ifs.fail())
+	{
+		CLFlow(filename);
+	}
+
+	std::vector<double> RawData;
+	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+	for(int j=0;j<speecharea.size();j++){
+		double tmp=0;
+		for(int i=speecharea[j].StartTime*FPS;i<speecharea[j].EndTime*FPS;i++){
+			tmp += RawData[i];
+		}
+		speecharea[j].set_FlowAve(tmp / ( ( speecharea[j].EndTime - speecharea[j].StartTime ) * FPS ) );
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -947,4 +1033,3 @@ int OpenCVSampleFlow(char* filename)
 	next.copyTo(prev);
 
 }
-
