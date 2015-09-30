@@ -79,6 +79,8 @@ public:
 	double FlowMinValue;
 	double VolumeAverage;
 	double FlowAverage;
+	double FlowDirection;
+	double VolumeSum;
 	bool ExclusionFlag;
 	
 	// 比較関数
@@ -87,15 +89,22 @@ public:
 		return (a.FlowMinValue < b.FlowMinValue); 
     } 
 
-	static bool volume_cmp(Shot a, Shot b)
+	static bool volumeAve_cmp(Shot a, Shot b)
     {
 		return (a.VolumeAverage > b.VolumeAverage); 
     } 
 
+	static bool volumeSum_cmp(Shot a, Shot b)
+    {
+		return (a.VolumeSum > b.VolumeSum); 
+    } 
+
 	void set_FlowAverage(double in){FlowAverage = in;}
 	void set_VolumeAverage(double in){VolumeAverage = in;}
+	void set_VolumeSum(double in){VolumeSum = in;}
 	void set_StartTime(double in){StartTime = in;}
 	void set_EndTime(double in){EndTime = in;}
+	void set_FlowDirection(double in){FlowDirection = in;}
 
 };
 
@@ -119,38 +128,40 @@ vector<double> CalcMoveAve(vector<short> inputvector, int Range);
 vector<double> CalcAve(vector<short> inputvector, int Range);
 double ClacOpticalFlowMoveDirection(DImage vx, DImage vy);
 void CalcFlowAve(vector<Shot> &speecharea, char* filename);
-void CalcVolumeAve(vector<Shot> &shots, char* filename);
+void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename);
 void CalcShotPriority(vector<Shot> &shots,char* filename, double volume_ratio, double optflow_ratio);
+void CalcFlowDirection(vector<Shot> &shots, char* filename);
+double CalcVolumeAveofWav(char* filename);
+void JointSpeechAreas(vector<Shot> &speechareas, double speechinterval,double maxtime);
 
-int main(){
+int main(int argc, char*argv[]){
+
 	int type;
-	cout << "モード選択" << endl;
-	cout << "1 : CLFlow" <<  endl;
-	cout << "2 : OpticalFlowBasedCutandDefinePriority" <<  endl;
+	string filename;
+	if(argc <3){
+		cout << "モード選択" << endl;
+		cout << "1 : メタファイル作成（CLFlow + 発話区間推定） + ピックアップ区間決定" <<  endl;
+		cout << "2 : OpticalFlowBasedCutandDefinePriority" <<  endl;
 
-	scanf("%d",&type);
-	cout << "ファイル名を入力してください" << endl;
-	char filename[30];
-	scanf("%s",filename);
+		scanf("%d",&type);
+		cout << "ファイル名を入力してください" << endl;
+		char tmp_name[50];
+		scanf("%s",tmp_name);
+		filename = tmp_name;
+	}else{
+		type = atoi(argv[1]);
+		filename = argv[2];
+	}
 	switch (type)
 	{
 	case 1:
-		CLFlow(filename);
-		//Ce Lue のオプティカルフローのアルゴリズムを使って，Username_CLFlow_sum.txt を生成
+		OpticalFlowBasedCutandAdjustShots((char*)filename.c_str());
+		SoundBasedAreaCut((char*)filename.c_str());
 		break;
 	case 2:
-		OpticalFlowBasedCutandDefinePriority(filename);
+		OpticalFlowBasedCutandAdjustShots((char*)filename.c_str());
 		//Username_CLFlow_sum.txt があることを前提として，オプティカルフローベースのカット
 		//（発話区間はカットの瞬間にしないように処理）
-		break;
-	case 3:
-		OpenCVSampleFlow("test_data.mp4");
-		break;
-	case 4:
-		OpenCVDefaultFlow(filename);
-		break;
-	case 5:
-		SoundBasedAreaCut(filename);
 		break;
 	default:
 		break;
@@ -158,6 +169,111 @@ int main(){
 }
 
 
+int OpticalFlowBasedCutandAdjustShots(char* filename){
+
+	//オプティカルフローをベースにショットを作成
+	vector<Shot> OpticalFlowMinArea =OpticalFlowBasedCut(filename);
+
+	double volumeave = CalcVolumeAveofWav(filename);
+	cout << volumeave;
+
+	//adintoolで，speechareaを計算（すでにあったら作らない）
+	DetectSpeechArea(filename,8000+2*volumeave,400);
+
+	//音声情報から，speechareaを計算
+	vector<Shot> speecharea = SpeechBasedCut(filename,8000+2*volumeave,400);
+
+	//発話間隔が2秒以内だったら，一つにつなげる
+	JointSpeechAreas(speecharea,2,20);
+
+	//speechareaから，発話の途中でショットがカットされないように調整
+	AdjustCutAreaBySpeechArea(OpticalFlowMinArea,speecharea);
+
+	//結果をファイルに保存
+	FILE *output_optbasecut;
+	ostringstream oss_output_optbasecut;
+	oss_output_optbasecut  << "digestmeta\\" << filename << "\\" << filename << "_optical_flow_base_cut.txt";
+	output_optbasecut = fopen(oss_output_optbasecut.str().c_str(), "w");
+
+	fprintf(output_optbasecut,"\t\n");
+
+	for(int i=0;i<10;i++){
+		ostringstream tmp;
+		tmp << OpticalFlowMinArea[i].StartTime << "\t" << OpticalFlowMinArea[i].EndTime << "\t" << endl; 
+//			(int)OpticalFlowMinArea[i].StartTime/60  << " : " << (int)OpticalFlowMinArea[i].StartTime%60 <<
+//			" - " << (int)OpticalFlowMinArea[i].EndTime/60 << " : " << (int)OpticalFlowMinArea[i].EndTime%60 << endl;
+
+		fprintf(output_optbasecut,tmp.str().c_str());
+	}
+    return 0;
+}
+
+int SoundBasedAreaCut(char* filename){
+
+	double volumeave = CalcVolumeAveofWav(filename);
+
+	DetectSpeechArea(filename,8000+2*volumeave,400);
+
+	//発話区間をadintoolで計算し， speecharea に入れる
+	vector<Shot> speecharea = SpeechBasedCut(filename,8000+2*volumeave,400);
+
+	//発話間隔が2秒以内だったら，一つにつなげる
+	JointSpeechAreas(speecharea,2,20);
+	
+	//7秒に満たないものは除外する
+	for(int i=0;i<speecharea.size();){
+		if( (speecharea[i].EndTime - speecharea[i].StartTime) < 7){
+			speecharea.erase(speecharea.begin()+i);
+		}else{
+			i++;
+		}
+	}
+
+	//VolumeAverageを計算
+	CalcVolumeChangeAveandSum(speecharea,filename);
+
+	//VolumeAverageを基に，ボリュームが大きい順にソート
+//	std::sort(speecharea.begin(), speecharea.end(), &Shot::volumeAve_cmp);
+
+	//VolumeSumを基に，大きい順にソート
+	std::sort(speecharea.begin(), speecharea.end(), &Shot::volumeSum_cmp);
+
+	//CLFlow_sumから，FlowAverageを計算
+	CalcFlowAve(speecharea,filename);
+
+	//FlowAverageを基に，あまりに動きが大きいところは区間から除外するようにする
+	for(auto shot = speecharea.begin() ; shot !=speecharea.end() ; ){
+		if(shot->FlowAverage > FLOWTHRE){
+			speecharea.erase(shot);
+		}else{
+			shot++;
+		}
+	}
+
+	//結果をファイルに保存
+	FILE *output_soundbasecut;
+	ostringstream oss_output_soundbasecut;
+	oss_output_soundbasecut  << "digestmeta\\" << filename << "\\" << filename << "_sound_base_cut.txt";
+	output_soundbasecut = fopen(oss_output_soundbasecut.str().c_str(), "w");
+
+	fprintf(output_soundbasecut,"\t\n");
+	for(int i=0;i<10;i++){
+		ostringstream tmp;
+		tmp << speecharea[i].StartTime << "\t" << speecharea[i].EndTime << "\t" << endl ;
+//		<< (int)speecharea[i].StartTime/60  << " : " << (int)speecharea[i].StartTime%60 <<
+//			" - " << (int)speecharea[i].EndTime/60 << " : " << (int)speecharea[i].EndTime%60 << endl;
+
+		fprintf(output_soundbasecut,tmp.str().c_str());
+	}
+
+	return 0;
+}
+
+void CalcShotPriority(vector<Shot> &shots,char* filename, double volume_ratio, double optflow_ratio){
+	CalcFlowAve(shots,filename);
+	CalcVolumeChangeAveandSum(shots,filename);
+	CalcFlowDirection(shots,filename);
+}
 
 void CLFlow(char* filename){
 
@@ -317,27 +433,6 @@ vector<Shot> OpticalFlowBasedCut(char* filename){
 	return OpticalFlowMinArea;
 }
 
-int OpticalFlowBasedCutandAdjustShots(char* filename){
-
-	//オプティカルフローをベースにショットを作成
-	vector<Shot> OpticalFlowMinArea =OpticalFlowBasedCut(filename);
-
-	//adintoolで，speechareaを計算（すでにあったら作らない）
-	DetectSpeechArea(filename,10000,1000);
-
-	//音声情報から，speechareaを計算
-	vector<Shot> speecharea = SpeechBasedCut(filename,10000,1000);
-
-	//speechareaから，発話の途中でショットがカットされないように調整
-	AdjustCutAreaBySpeechArea(OpticalFlowMinArea,speecharea);
-
-	for(int i=0;i<10;i++){
-		std::cout << OpticalFlowMinArea[i].StartTime << "-" << OpticalFlowMinArea[i].EndTime << "\t" << 
-			(int)OpticalFlowMinArea[i].StartTime/60  << " : " << (int)OpticalFlowMinArea[i].StartTime%60 <<
-			" - " << (int)OpticalFlowMinArea[i].EndTime/60 << " : " << (int)OpticalFlowMinArea[i].EndTime%60 << endl;
-	}
-    return 0;
-}
 
 void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval){
 
@@ -384,13 +479,59 @@ void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval){
 		std::ostringstream run_adintool;
 		run_adintool << "adintool.exe -in file -filelist " << filelist_name.str().c_str() <<
 			" -out file -filename adintool_result\\ -freq 48000 -headmargin " << speechinterval/2 <<
-			" -tailmargin " << speechinterval << " -lv " << volumethreshold << " > ";
+			" -tailmargin " << speechinterval/2 << " -lv " << volumethreshold << " > ";
 		run_adintool << "digestmeta\\" << filename << "\\" << filename << "_speechareas_" << volumethreshold << "_" << speechinterval <<".txt";
 		ret = system(run_adintool.str().c_str());
 		if (ret != 0){
 			printf("Adintool起動失敗\n");
 		}
 	}
+}
+
+double CalcVolumeAveofWav(char* filename){
+
+	int ret;
+	std::ostringstream makemonofile,monofilename;
+	monofilename << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+
+	FILE *fileexisttest;
+	if ( (fileexisttest = fopen(monofilename.str().c_str(),"r")) != NULL ){
+		fclose( fileexisttest );
+		// ファイルが存在する
+	}
+	else{
+		makemonofile << "ffmpeg -i digestmeta\\" << filename << "\\" << filename << ".mp4";
+		makemonofile << " -ac 1 digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+		ret = system(makemonofile.str().c_str());
+		if (ret != 0){
+			printf("モノラルファイル作成失敗\n");
+		}
+	}
+
+	WAVE          wav1;
+    WAVE_FORMAT   fmt1;
+    vector<short> ch1,ch2;
+	double volumeave=0;
+        
+    //ファイルから読み込み
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+    wav1.load_from_file((char*)oss.str().c_str());
+    
+    //フォーマット情報とデータを取り出す
+    fmt1=wav1.get_format();
+    wav1.get_channel(ch1,0);
+        
+	if(fmt1.num_of_channels == 2){
+		for(int i=0;i<ch1.size();i++){
+			volumeave += (abs(ch1[i])+abs(ch2[i]));
+		}
+	}else{
+		for(int i=0;i<ch1.size();i++){
+			volumeave += abs(ch1[i]);
+		}
+	}
+	return volumeave / (double)ch1.size();
 }
 
 bool search_areas(Shot inputshot, double time){
@@ -463,6 +604,17 @@ vector<Shot> SpeechBasedCut(char* filename, int volumethreshold, int speechinter
 		}
 	}
 	return out;	
+}
+
+void JointSpeechAreas(vector<Shot> &speechareas, double speechinterval,double maxtime){
+	for(int i=0;i<speechareas.size()-1;){
+		if((speechareas[i+1].StartTime - speechareas[i].EndTime) < speechinterval && (speechareas[i+1].EndTime - speechareas[i].StartTime) < maxtime){
+			speechareas[i].set_EndTime(speechareas[i+1].EndTime);
+			speechareas.erase(speechareas.begin()+i+1);
+		}else{
+			i++;
+		}
+	}
 }
 
 vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename){
@@ -577,47 +729,6 @@ int samplingrateofwave(char* filename)
 	return fmt1.samples_per_sec;
 }
 
-int SoundBasedAreaCut(char* filename){
-
-	DetectSpeechArea(filename,12000,1850);
-
-	//発話区間をadintoolで計算し， speecharea に入れる
-	vector<Shot> speecharea = SpeechBasedCut(filename,12000,1850);
-
-	//発話間隔が1.85秒以内だったら，一つにつなげる
-	for(int i=0;i<speecharea.size()-1;i++){
-		if( (speecharea[i+1].StartTime - speecharea[i].EndTime) < 1.85){
-			speecharea[i].EndTime = speecharea[i+1].EndTime;
-			speecharea.erase(speecharea.begin()+i+1);
-		}
-	}
-
-	//VolumeAverageを計算
-	CalcVolumeAve(speecharea,filename);
-
-	//VolumeAverageを基に，ボリュームが大きい順にソート
-	std::sort(speecharea.begin(), speecharea.end(), &Shot::volume_cmp);
-
-	//CLFlow_sumから，FlowAverageを計算
-	CalcFlowAve(speecharea,filename);
-
-	//FlowAverageを基に，あまりに動きが大きいところは区間から除外するようにする
-	for(auto shot = speecharea.begin() ; shot !=speecharea.end() ; ){
-		if(shot->FlowAverage > FLOWTHRE){
-			speecharea.erase(shot);
-		}else{
-			shot++;
-		}
-	}
-
-	for(int i=0;i<10;i++){
-		ostringstream oss_tmp;
-		oss_tmp << "ffmpeg -i " << "digestmeta\\" << filename << "\\" << filename << ".mp4 -ss " << speecharea[i].StartTime-2 << " -t " << speecharea[i].EndTime - speecharea[i].StartTime + 2 << " digestmeta\\" << filename << "\\speechscenes\\" << filename << "_" << i << ".mp4" << endl;
-		system(oss_tmp.str().c_str());
-	}
-
-	return 0;
-}
 
 vector<double> CalcMoveAve(vector<double> inputvector, int Range){
 	vector<double> MoveAveResult;
@@ -694,7 +805,7 @@ void CalcFlowAve(vector<Shot> &shots, char* filename){
 	}
 }
 
-void CalcVolumeAve(vector<Shot> &shots, char* filename){
+void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
 
 	vector<short> videovolume = readwave(filename);
 	const int SamplingRate = samplingrateofwave(filename);
@@ -705,14 +816,33 @@ void CalcVolumeAve(vector<Shot> &shots, char* filename){
 		for(int i = (shots[j].StartTime / VolumeAveRange );i<(shots[j].EndTime / VolumeAveRange)-1 ; i++){
 			volume += abs( videovolume_ave[i] - videovolume_ave[i+1] ) ; 
 		}
-		shots[j].VolumeAverage =  volume / (shots[j].EndTime - shots[j].StartTime) / SamplingRate; 
+		shots[j].set_VolumeAverage( volume / (shots[j].EndTime - shots[j].StartTime) / SamplingRate );
+		shots[j].set_VolumeSum(volume);
 	}
 }
 
-void CalcShotPriority(vector<Shot> &shots,char* filename, double volume_ratio, double optflow_ratio){
-	CalcFlowAve(shots,filename);
-	CalcVolumeAve(shots,filename);
+void CalcFlowDirection(vector<Shot> &shots, char* filename){
+
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_direction.txt";
+	std::ifstream ifs(oss.str().c_str());
+	if (ifs.fail())
+	{
+		CLFlow(filename);
+	}
+
+	std::vector<double> RawData;
+	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+	for(int j=0;j<shots.size();j++){
+		double tmp=0;
+		for(int i=shots[j].StartTime*FPS;i<shots[j].EndTime*FPS;i++){
+			tmp += RawData[i];
+		}
+		shots[j].set_FlowDirection(tmp / ( ( shots[j].EndTime - shots[j].StartTime ) * FPS ) );
+	}
 }
+
 
 
 

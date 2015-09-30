@@ -1,4 +1,4 @@
-﻿2015/09/29 17:59:04 にビルドを開始しました。
+﻿2015/09/30 19:19:57 にビルドを開始しました。
      1>ノード 2 上のプロジェクト "C:\Users\serva_000\Documents\Visual Studio 2012\Projects\Video_Flow_git\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット)。
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /IC:\openCV\opencv\build\include\opencv2 /IC:\openCV\opencv\build\include\opencv /IC:\openCV\opencv\build\include /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"x64\Release\ConsoleApplication2.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc110.pdb" /Gd /TP /FIstdafx.h /errorReport:prompt Video_Flow.cpp
@@ -9,43 +9,54 @@
      1>c:\users\serva_000\documents\visual studio 2012\projects\video_flow_git\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
      1>c:\users\serva_000\documents\visual studio 2012\projects\video_flow_git\consoleapplication2\NoiseModel.h(6): warning C4005: 'PI' : マクロが再定義されました。
                  c:\users\serva_000\documents\visual studio 2012\projects\video_flow_git\consoleapplication2\Stochastic.h(16) : 'PI' の前の定義を確認してください
-     1>Video_Flow.cpp(131): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(146): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : 'scanf' の宣言を確認してください。
-     1>Video_Flow.cpp(134): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(149): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : 'scanf' の宣言を確認してください。
-     1>Video_Flow.cpp(181): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(181): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(184): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(196): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>Video_Flow.cpp(186): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(215): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(218): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(257): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>Video_Flow.cpp(347): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(297): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>Video_Flow.cpp(360): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(302): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>Video_Flow.cpp(380): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(442): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>Video_Flow.cpp(452): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(455): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(475): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(498): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(593): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : 'strtok' の宣言を確認してください。
-     1>Video_Flow.cpp(460): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(601): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : 'strtok' の宣言を確認してください。
-     1>Video_Flow.cpp(471): warning C4101: 'tmp_endtime' : ローカル変数は 1 度も使われていません。
-     1>Video_Flow.cpp(471): warning C4101: 'tmp_starttime' : ローカル変数は 1 度も使われていません。
-     1>Video_Flow.cpp(690): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(701): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(705): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(768): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(623): warning C4101: 'tmp_endtime' : ローカル変数は 1 度も使われていません。
+     1>Video_Flow.cpp(623): warning C4101: 'tmp_starttime' : ローカル変数は 1 度も使われていません。
+     1>Video_Flow.cpp(801): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(812): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(816): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(839): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(898): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>Video_Flow.cpp(771): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+     1>Video_Flow.cpp(901): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
-     1>Video_Flow.cpp(911): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(912): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(929): warning C4244: '=' : 'double' から 'UINT8' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(937): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(938): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(946): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(947): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(949): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(950): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
-     1>Video_Flow.cpp(991): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1041): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1042): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1059): warning C4244: '=' : 'double' から 'UINT8' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1067): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1068): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1076): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1077): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1079): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1080): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1121): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
      1>c:\users\serva_000\documents\visual studio 2012\projects\video_flow_git\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
                  c:\users\serva_000\documents\visual studio 2012\projects\video_flow_git\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
                  with
@@ -105,7 +116,7 @@
                  [
                      T=double
                  ]
-                 Video_Flow.cpp(207) : コンパイルされたクラスの テンプレート のインスタンス化 'bool Image<T>::matimread(cv::Mat &)' の参照を確認してください
+                 Video_Flow.cpp(323) : コンパイルされたクラスの テンプレート のインスタンス化 'bool Image<T>::matimread(cv::Mat &)' の参照を確認してください
                  with
                  [
                      T=double
@@ -174,4 +185,4 @@
 
 ビルドに成功しました。
 
-経過時間 00:00:23.60
+経過時間 00:00:24.73
