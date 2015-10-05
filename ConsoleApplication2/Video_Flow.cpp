@@ -59,7 +59,7 @@
 #define OpticalFlowUnCuttableRate 0.3
 #define VolumeSmoothRange 1
 #define VolumeAveRange 0.1//秒単位
-#define FLOWTHRE 4500000
+#define FLOWTHRE 1.3
 
 #include "cv.h"
 #include "highgui.h"
@@ -146,7 +146,9 @@ void CalcFlowDirection(vector<Shot> &shots, char* filename);
 double CalcVolumeAveofWav(char* filename);
 void JointSpeechAreas(vector<Shot> &speechareas, double speechinterval,double maxtime);
 void CalcVolumeAndFlowMixPriority(vector<Shot> &shots, double volume_ratio, double optflow_ratio);
-void CutAndDefinePriority(char* filename, double volume_ratio, double optflow_ratio, int Base);
+void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double optflow_ratio);
+void MakeMonoFile(char* filename);
+void tmp();
 
 int main(int argc, char*argv[]){
 
@@ -155,7 +157,6 @@ int main(int argc, char*argv[]){
 	if(argc <3){
 		cout << "モード選択" << endl;
 		cout << "1 : メタファイル作成（CLFlow + 発話区間推定） + ピックアップ区間決定" <<  endl;
-		cout << "2 : OpticalFlowBasedCutandDefinePriority" <<  endl;
 
 		scanf("%d",&type);
 		cout << "ファイル名を入力してください" << endl;
@@ -169,17 +170,28 @@ int main(int argc, char*argv[]){
 	switch (type)
 	{
 	case 1:
-		OpticalFlowBasedCutandAdjustShots((char*)filename.c_str());
-		SoundBasedAreaCut((char*)filename.c_str());
+		//degug
+//		CutAndDefinePriority((char*)filename.c_str(),1,-1,0);
+
+		//normal
+		CutAndDefinePriority((char*)filename.c_str(),1,1,0);
+		CutAndDefinePriority((char*)filename.c_str(),2,0,1);
+		//reverse
+		CutAndDefinePriority((char*)filename.c_str(),1,0,1);
+		CutAndDefinePriority((char*)filename.c_str(),2,1,0);
 		break;
 	case 2:
-		CutAndDefinePriority((char*)filename.c_str(),1,0,1);
-		CutAndDefinePriority((char*)filename.c_str(),0,1,2);
+		OpticalFlowBasedCutandAdjustShots((char*)filename.c_str());
+		SoundBasedAreaCut((char*)filename.c_str());
 		break;
 	case 3:
 		OpticalFlowBasedCutandAdjustShots((char*)filename.c_str());
 		//Username_CLFlow_sum.txt があることを前提として，オプティカルフローベースのカット
 		//（発話区間はカットの瞬間にしないように処理）
+		break;
+	case 4:
+//		CLFlow((char*)filename.c_str());
+//		tmp();
 		break;
 	default:
 		break;
@@ -262,6 +274,8 @@ vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 }
 
 vector<Shot> MakeShotBaseBySpeech(char* filename,double speechinterval, int shotmaxtime){
+
+	MakeMonoFile(filename);
 	double volumeave = CalcVolumeAveofWav(filename);
 	DetectSpeechArea(filename,8000+2*volumeave,400);
 
@@ -306,6 +320,28 @@ int OpticalFlowBasedCutandAdjustShots(char* filename){
 		fprintf(output_optbasecut,tmp.str().c_str());
 	}
     return 0;
+}
+
+void MakeMonoFile(char* filename){
+
+	int ret;
+	std::ostringstream makemonofile,monofilename;
+	monofilename << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+
+	FILE *fileexisttest;
+	if ( (fileexisttest = fopen(monofilename.str().c_str(),"r")) != NULL ){
+		fclose( fileexisttest );
+		// ファイルが存在する
+	}
+	else{
+		makemonofile << "ffmpeg -i digestmeta\\" << filename << "\\" << filename << ".mp4";
+		makemonofile << " -ac 1 -af \"bandreject=f=500:width_type=h:w=400\" digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+		ret = system(makemonofile.str().c_str());
+		if (ret != 0){
+			printf("モノラルファイル作成失敗\n");
+		}
+	}
+
 }
 
 int SoundBasedAreaCut(char* filename){
@@ -363,7 +399,7 @@ int SoundBasedAreaCut(char* filename){
 	return 0;
 }
 
-void CutAndDefinePriority(char* filename, double volume_ratio, double optflow_ratio, int Base){
+void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double optflow_ratio){
 	//Baseが1なら，speech
 	//Baseが2なら，OpticalFlow
 
@@ -394,9 +430,35 @@ void CutAndDefinePriority(char* filename, double volume_ratio, double optflow_ra
 		//CLFlow_sumから，FlowAverageを計算
 		CalcFlowAve(shots,filename);
 
+		//CLFlowの全体の平均を計算
+		ostringstream oss;
+		oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+		std::ifstream ifs(oss.str().c_str());
+
+		//CLFlowの結果をRawDataにいったん格納し，その後移動平均を取ってMAveDataに格納
+		std::vector<double> RawData;
+		std::vector<double> MAveData;
+		std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+		double average=0;
+		for(int i=0;i<RawData.size()-MAveWidth;i++){
+			for(int j=0;j<MAveWidth;j++){
+				if(j==0){
+					MAveData.push_back(RawData[i+j]);
+				}else{
+					MAveData[i] += RawData[i+j];
+				}
+			}
+			MAveData[i] /= MAveWidth;
+			average += MAveData[i];
+		}
+		average /= MAveData.size();
+		const double THRE = FLOWTHRE * average;//MAveDataの平均の1.3倍の値を閾値と定義		
+		//CLFlowの全体の平均を計算
+
 		//FlowAverageを基に，あまりに動きが大きいところは区間から除外するようにする
 		for(auto shot = shots.begin() ; shot !=shots.end() ; ){
-			if(shot->FlowAverage > FLOWTHRE){
+			if(shot->FlowAverage > THRE){
 				shots.erase(shot);
 			}else{
 				shot++;
@@ -465,10 +527,12 @@ void CutAndDefinePriority(char* filename, double volume_ratio, double optflow_ra
 	}
 }
 
+
 void CLFlow(char* filename){
 
 	ostringstream moviefile;
 	moviefile  << "digestmeta\\" << filename << "\\" << filename << ".mp4";
+//	moviefile  << "digestmeta\\" << filename << "\\" << filename << "_test.mp4";//デバッグ用
 	// 動画ファイルの読み込み
 	VideoCapture capture = VideoCapture(moviefile.str().c_str());
 	// TV-L1アルゴリズムによるオプティカルフロー計算オブジェクトの生成
@@ -515,6 +579,9 @@ void CLFlow(char* filename){
 
 		ofio.OpticalFlowIOMain(vx,vy,Im1,Im2,warp);
 
+
+//		Mat magnitude = Mat::zeros(90, 160, CV_8UC1);
+
 		/*
 		DImage tmp;
 		std::ostringstream oss_;
@@ -527,6 +594,10 @@ void CLFlow(char* filename){
 		int opt_sum=0;
 		for(int y = 0; y < vx.height(); ++y){
 			for(int x = 0; x < vx.width(); ++x){
+				//デバッグ用
+//				magnitude.at<unsigned char>(y,x) = 255*sqrt(pow(vx.pData[y*vx.width()+x],2) + pow(vy.pData[y*vx.width()+x],2));
+				//デバッグ用
+
 				int k = std::min(999,(int)(100*sqrt(pow(vx.pData[y*vx.width()+x],2) + pow(vy.pData[y*vx.width()+x],2))));
 				opt_hist[k]++;
 				opt_sum += k;
@@ -535,7 +606,16 @@ void CLFlow(char* filename){
 		fprintf(output_sum,"%d\n",opt_sum);
 
 		fprintf(output_direction,"%lf\n",ClacOpticalFlowMoveDirection(vx,vy));
+
+		//デバッグ用
 		
+//		ostringstream osstmp;
+//		osstmp << "digestmeta\\kihara\\" << count+1 <<".png";
+//		cv::imwrite(osstmp.str().c_str(),magnitude);
+
+		//デバッグ用
+
+
 		/*
 		for(int j=0;j<1000;j++){
 			fprintf(output_hist, "%d\t",opt_hist[j]);
@@ -546,6 +626,27 @@ void CLFlow(char* filename){
 		curr.copyTo(prev);
 	}
 
+}
+
+void tmp(){
+	for(int i=0;i<10;i++){
+		Mat x,y;
+		ostringstream osstmp1,osstmp2;
+		osstmp1 << "digestmeta\\kihara\\x_" << i+1 <<".jpg";
+		osstmp2 << "digestmeta\\kihara\\y_" << i+1 <<".jpg";
+		x =imread(osstmp1.str().c_str());
+		y =imread(osstmp2.str().c_str());
+
+		Mat magnitude, angle;
+		cartToPolar(x, y, magnitude, angle, true);
+
+		Mat mat_ir;
+		magnitude.convertTo(mat_ir, CV_8UC1, 255.0);
+
+		ostringstream osstmp;
+		osstmp << "digestmeta\\kihara\\" << i+1 <<".png";
+		cv::imwrite(osstmp.str().c_str(),mat_ir);
+	}
 }
 
 void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval){
@@ -561,23 +662,7 @@ void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval){
 	else{
 		// ファイルは存在しないので作る
 
-		int ret;
-		std::ostringstream makemonofile,monofilename;
-		monofilename << "digestmeta\\" << filename << "\\" << filename << "_mono.wav";
-
-		FILE *fileexisttest;
-		if ( (fileexisttest = fopen(monofilename.str().c_str(),"r")) != NULL ){
-			fclose( fileexisttest );
-			// ファイルが存在する
-		}
-		else{
-			makemonofile << "ffmpeg -i digestmeta\\" << filename << "\\" << filename << ".mp4";
-			makemonofile << " -ac 1 digestmeta\\" << filename << "\\" << filename << "_mono.wav";
-			ret = system(makemonofile.str().c_str());
-			if (ret != 0){
-				printf("モノラルファイル作成失敗\n");
-			}
-		}
+		MakeMonoFile(filename);
 
 		FILE *filelist;
 		std::ostringstream filelist_name;
@@ -595,7 +680,7 @@ void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval){
 			" -out file -filename adintool_result\\ -freq 48000 -headmargin " << speechinterval/2 <<
 			" -tailmargin " << speechinterval/2 << " -lv " << volumethreshold << " > ";
 		run_adintool << "digestmeta\\" << filename << "\\" << filename << "_speechareas_" << volumethreshold << "_" << speechinterval <<".txt";
-		ret = system(run_adintool.str().c_str());
+		int ret = system(run_adintool.str().c_str());
 		if (ret != 0){
 			printf("Adintool起動失敗\n");
 		}
@@ -989,14 +1074,12 @@ void CalcVolumeAndFlowMixPriority(vector<Shot> &shots, double volume_ratio, doub
 
 
 
-
-
 //以下，OpenCVのデフォルト関数を用いたオプティカルフローの計算
 //なぜかピークが現れた
 void OpenCVDefaultFlow(char *filename){
 
 	ostringstream moviefile;
-	moviefile  << "digestmeta\\" << filename << "\\" << filename << ".mp4";
+	moviefile  << "digestmeta\\" << filename << "\\" << filename << "_test.mp4";
 	// 動画ファイルの読み込み
 	VideoCapture capture = VideoCapture(moviefile.str().c_str());
 	// TV-L1アルゴリズムによるオプティカルフロー計算オブジェクトの生成
@@ -1044,10 +1127,26 @@ void OpenCVDefaultFlow(char *filename){
 		opticalFlow->calc(prev, curr, flowX, flowY);
 //		opticalFlow->calc(prev, curr, flowXY);
 
-		///////////↓デバッグ用↓
-		/*
 		Mat magnitude, angle;
 		cartToPolar(flowX, flowY, magnitude, angle, true);
+
+		Mat mat_ir;
+		magnitude.convertTo(mat_ir, CV_8UC1, 255.0);
+
+		ostringstream osstmp;
+		osstmp << "digestmeta\\kihara\\" << count+1 <<".png";
+		cv::imwrite(osstmp.str().c_str(),mat_ir);
+
+		int tmp = 0;
+		for(int y=0;y<magnitude.rows;y++){
+			for(int x=0;x<magnitude.cols;x++){
+				tmp += magnitude.at<unsigned char>(y,x);
+			}
+		}
+		cout << tmp ;
+
+		///////////↓デバッグ用↓
+		/*
 
 		Mat hsvPlanes[3];		
 		hsvPlanes[0] = angle;
@@ -1074,6 +1173,9 @@ void OpenCVDefaultFlow(char *filename){
 		*/
 		///////////↑デバッグ用↑
 
+//		imshow("magnitude",magnitude);
+//		cvWaitKey(0);
+
 		double flow_sum=0;		//フレームごとのオプティカルフローの合計値
 
 		for(int y = 0; y < flowX.rows; ++y){
@@ -1092,7 +1194,8 @@ void OpenCVDefaultFlow(char *filename){
 			//			fprintf(output_debug2,"\n");
 		}
 
-		fprintf(output_sum ,"%lf\n", flow_sum );
+		printf(" \nflow_sum : %lf\n", flow_sum );
+		fprintf(output_sum ," %lf\n", flow_sum );
 
 		for(int j=0;j<400;j++){
 			fprintf(output_hist, "%d\t",opt_hist[j] );
