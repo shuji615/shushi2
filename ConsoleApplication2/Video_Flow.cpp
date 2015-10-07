@@ -171,7 +171,7 @@ int main(int argc, char*argv[]){
 	{
 	case 1:
 		//degug
-//		CutAndDefinePriority((char*)filename.c_str(),1,-1,0);
+		CutAndDefinePriority((char*)filename.c_str(),1,-1,0);
 
 		//normal
 		CutAndDefinePriority((char*)filename.c_str(),1,1,0);
@@ -230,7 +230,7 @@ vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 		average += MAveData[i];
 	}
 	average /= MAveData.size();
-	const double THRE = 0.7 * average;//MAveDataの平均の0.7倍の値を閾値と定義
+	const double THRE = 1.0 * average;//MAveDataの平均の0.7倍の値を閾値と定義
 
 	vector<Shot> StopArea;
 	Shot tmp;
@@ -430,7 +430,7 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 		//CLFlow_sumから，FlowAverageを計算
 		CalcFlowAve(shots,filename);
 
-		//CLFlowの全体の平均を計算
+		//CLFlowの全体の平均と分散を計算
 		ostringstream oss;
 		oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
 		std::ifstream ifs(oss.str().c_str());
@@ -440,7 +440,7 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 		std::vector<double> MAveData;
 		std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
 
-		double average=0;
+		double average=0, dispersion=0;
 		for(int i=0;i<RawData.size()-MAveWidth;i++){
 			for(int j=0;j<MAveWidth;j++){
 				if(j==0){
@@ -453,8 +453,13 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 			average += MAveData[i];
 		}
 		average /= MAveData.size();
-		const double THRE = FLOWTHRE * average;//MAveDataの平均の1.3倍の値を閾値と定義		
-		//CLFlowの全体の平均を計算
+
+		for(int i=0;i<MAveData.size();i++){
+			dispersion += pow( MAveData[i] - average , 2) ;
+		}
+		dispersion = sqrt(dispersion / MAveData.size() );
+
+		const double THRE = average + dispersion;//MAveDataの平均から１σを閾値と定義		
 
 		//FlowAverageを基に，あまりに動きが大きいところは区間から除外するようにする
 		for(auto shot = shots.begin() ; shot !=shots.end() ; ){
