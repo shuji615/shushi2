@@ -129,7 +129,6 @@ vector<Shot> MakeShotBaseBySpeech(char* filename,double speechinterval, int shot
 int OpticalFlowBasedCutandAdjustShots(char* filename);
 void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval);
 bool search_areas(Shot speecharea, double time);
-void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &continuityareas);
 vector<Shot> SpeechBasedCut(char* filename, int volumethreshold, int speechinterval);
 vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename);
 int SoundBasedAreaCut(char* filename);
@@ -149,6 +148,8 @@ void CalcVolumeAndFlowMixPriority(vector<Shot> &shots, double volume_ratio, doub
 void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double optflow_ratio);
 void MakeMonoFile(char* filename);
 void tmp();
+vector<Shot> CutSpeechArea(vector<Shot> &speechareas,double maxtime,int joint_start,int joint_end);
+void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &continuityareas, int mode);
 
 int main(int argc, char*argv[]){
 
@@ -294,10 +295,10 @@ int OpticalFlowBasedCutandAdjustShots(char* filename){
 	vector<Shot> OpticalFlowMinArea = MakeShotBaseByOpticalFlow(filename);
 
 	//speechareaを作る
-	vector<Shot> speecharea = MakeShotBaseBySpeech(filename,1,15);
+	vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,15);
 
 	//speechareaから，発話の途中でショットがカットされないように調整
-	AdjustCutAreaBySpeechArea(OpticalFlowMinArea,speecharea);
+	AdjustCutAreaBySpeechArea(OpticalFlowMinArea,speecharea,2);
 
 	//flowの１５秒の平均が小さい順にソート
 	//（FlowMinがもともと１５秒平均の値であることに注意）
@@ -484,10 +485,10 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 
 	}else{
 		//speechareaを作る
-		vector<Shot> speecharea = MakeShotBaseBySpeech(filename,1,15);
+		vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,15);
 
 		//speechareaから，発話の途中でショットがカットされないように調整
-		AdjustCutAreaBySpeechArea(shots,speecharea);
+		AdjustCutAreaBySpeechArea(shots,speecharea,1);
 
 		//被っている時間が半分以上ある場合は，FlowAveの値が小さい方を残して，大きい方を消す
 		CalcFlowAve(shots,filename);
@@ -748,9 +749,11 @@ bool search_areas(Shot inputshot, double time){
 	}
 }
 
-void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &continuityareas){
+void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &continuityareas, int mode){
 	//adjustingarea のstartとendが continuityareas のどこかに入っているかどうか調べて，
 	//入っていれば，入っている continuityarea のstart/end まで幅を広げてshotを返す
+	//mode １:伸ばす
+	//mode ２:縮める
 
 	for(int j=0;j<adjustingarea.size();j++){
 		double starttime = adjustingarea[j].StartTime;
@@ -760,13 +763,31 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &contin
 
 		for(int i=0;i<continuityareas.size();i++){
 			if(search_areas(continuityareas[i],starttime) == true){
-				adjustingarea[j].set_StartTime(continuityareas[i].StartTime);
+				if(mode == 1){
+					adjustingarea[j].set_StartTime(continuityareas[i].StartTime);
+				}else{
+					if(adjustingarea[j].EndTime < continuityareas[i].EndTime){
+						adjustingarea.erase(adjustingarea.begin()+j);
+						i--;
+					}else{
+						adjustingarea[j].set_StartTime(continuityareas[i].EndTime);
+					}
+				}
 				break;
 			}
 		}
 		for(int i=0;i<continuityareas.size();i++){
 			if(search_areas(continuityareas[i],endtime) == true){
-				adjustingarea[j].set_EndTime(continuityareas[i].EndTime);
+				if(mode == 1){
+					adjustingarea[j].set_EndTime(continuityareas[i].EndTime);
+				}else{
+					if(adjustingarea[j].StartTime > continuityareas[i].StartTime){
+						adjustingarea.erase(adjustingarea.begin()+j);
+						i--;
+					}else{
+						adjustingarea[j].set_EndTime(continuityareas[i].StartTime);
+					}
+				}
 				break;
 			}
 		}
@@ -811,14 +832,61 @@ vector<Shot> SpeechBasedCut(char* filename, int volumethreshold, int speechinter
 }
 
 void JointSpeechAreas(vector<Shot> &speechareas, double speechinterval,double maxtime){
-	for(int i=0;i<speechareas.size()-1;){
-		if((speechareas[i+1].StartTime - speechareas[i].EndTime) < speechinterval && (speechareas[i+1].EndTime - speechareas[i].StartTime) < maxtime){
-			speechareas[i].set_EndTime(speechareas[i+1].EndTime);
-			speechareas.erase(speechareas.begin()+i+1);
+
+	bool flag = false;
+	int joint_start, joint_end;
+
+	for(int i=0;i<speechareas.size()-1;i++){
+		if((speechareas[i+1].StartTime - speechareas[i].EndTime) < speechinterval){
+			if(flag == false){
+				joint_start = i;
+				flag = true;
+			}
 		}else{
-			i++;
+			if(flag == true){
+				joint_end = i;
+				vector<Shot> CuttenAreas;
+				CuttenAreas = CutSpeechArea(speechareas,maxtime,joint_start,joint_end);
+				flag = false;
+				//speechareas のjoint_startからjoint_endまでを消して，CuttenAreasを追加する
+				speechareas.erase(speechareas.begin() + joint_start,speechareas.begin() + joint_end + 1);
+				speechareas.insert(speechareas.begin() + joint_start, CuttenAreas.begin(), CuttenAreas.end());
+
+				i=joint_start + CuttenAreas.size() -1 ;
+			}
 		}
 	}
+}
+
+vector<Shot> CutSpeechArea(vector<Shot> &speechareas,double maxtime,int joint_start,int joint_end){
+	vector<Shot> out;
+	if( speechareas[joint_end].EndTime - speechareas[joint_start].StartTime < maxtime){
+		Shot tmp;
+		tmp.StartTime = speechareas[joint_start].StartTime;
+		tmp.EndTime = speechareas[joint_end].EndTime;
+		out.push_back(tmp);
+	}else{
+		int MaxInterval_start;
+		double MaxInterval=0;
+		if(joint_end - joint_start <= 1){
+			out.insert(out.end(), speechareas.begin() + joint_start,speechareas.begin() + joint_end + 1);
+		}else{
+			for(int i=joint_start;i<joint_end-1;i++){
+				if(speechareas[i+1].StartTime - speechareas[i].EndTime > MaxInterval){
+					MaxInterval = speechareas[i+1].StartTime - speechareas[i].EndTime;
+					MaxInterval_start = i;
+				}
+			}
+			//一番大きいintervalで分けたときの，前半分
+			vector<Shot> FirstHalf = CutSpeechArea(speechareas,maxtime,joint_start,MaxInterval_start);
+			out.insert(out.end(), FirstHalf.begin(),FirstHalf.end());
+
+			//一番大きいintervalで分けたときの，後半分
+			vector<Shot> SecondHalf = CutSpeechArea(speechareas,maxtime,MaxInterval_start+1,joint_end);
+			out.insert(out.end(), SecondHalf.begin(),SecondHalf.end());
+		}
+	}
+	return out;
 }
 
 vector<Shot> MakeOpticalFlowBasedUncuttableAreaVector(char* filename){
