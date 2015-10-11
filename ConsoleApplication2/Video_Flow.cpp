@@ -488,7 +488,16 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 		vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,15);
 
 		//speechareaから，発話の途中でショットがカットされないように調整
-		AdjustCutAreaBySpeechArea(shots,speecharea,1);
+		AdjustCutAreaBySpeechArea(shots,speecharea,2);
+
+		//7秒に満たないものは除外する
+		for(int i=0;i<shots.size();){
+			if( (shots[i].EndTime - shots[i].StartTime) < 7){
+				shots.erase(shots.begin()+i);
+			}else{
+				i++;
+			}
+		}
 
 		//被っている時間が半分以上ある場合は，FlowAveの値が小さい方を残して，大きい方を消す
 		CalcFlowAve(shots,filename);
