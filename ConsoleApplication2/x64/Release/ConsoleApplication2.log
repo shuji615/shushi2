@@ -1,9 +1,1002 @@
-﻿2015/10/17 19:47:40 にビルドを開始しました。
-     1>ノード 2 上のプロジェクト "C:\Users\shuji\Documents\Visual Studio 2012\Projects\Video_Flow_git\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット)。
-     1>Link:
-         ConsoleApplication2.vcxproj -> C:\Users\shuji\Documents\Visual Studio 2012\Projects\Video_Flow_git\x64\Release\ConsoleApplication2.exe
-     1>プロジェクト "C:\Users\shuji\Documents\Visual Studio 2012\Projects\Video_Flow_git\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット) のビルドが完了しました。
+﻿2015/10/18 2:27:49 にビルドを開始しました。
+     1>ノード 2 上のプロジェクト "C:\Users\将希\Documents\Visual Studio 2012\Projects\LogLogCutter\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /IC:\openCV\opencv\build\include\opencv2 /IC:\openCV\opencv\build\include\opencv /IC:\openCV\opencv\build\include /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"x64\Release\ConsoleApplication2.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc110.pdb" /Gd /TP /FIstdafx.h /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\CL.exe /c /IC:\openCV\opencv\build\include\opencv2 /IC:\openCV\opencv\build\include\opencv /IC:\openCV\opencv\build\include /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D NDEBUG /D _CONSOLE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"x64\Release\ConsoleApplication2.pch" /Fo"x64\Release\\" /Fd"x64\Release\vc110.pdb" /Gd /TP /FIstdafx.h /errorReport:prompt Coarse2FineTwoFrames.cpp ColorWheel.cpp face.cpp FaceDetection.cpp GaussianPyramid.cpp OpticalFlow.cpp OpticalFlowIO.cpp Stochastic.cpp TestOpticalFlow.cpp Video_Flow.cpp wave.cpp
+         Coarse2FineTwoFrames.cpp
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\NoiseModel.h(6): warning C4005: 'PI' : マクロが再定義されました。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(16) : 'PI' の前の定義を確認してください
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\OpticalFlow.h(68) : コンパイルされたクラスの テンプレート のインスタンス化 'Image<T>' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(745): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(835): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(833): クラス テンプレート のメンバー関数 'bool Image<T>::saveImage(std::ofstream &) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(875): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(861): クラス テンプレート のメンバー関数 'bool Image<T>::loadImage(std::ifstream &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(876): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(877): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(878): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(879): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(205): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(206): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(108): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(901) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadMatImage<T>(cv::Mat &,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(899): クラス テンプレート のメンバー関数 'bool Image<T>::matimread(cv::Mat &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(69): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(920) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadImage<T>(const char *,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(918): クラス テンプレート のメンバー関数 'bool Image<T>::imread(const char *)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(132): warning C4305: 'return' : 'int' から 'bool' へ切り詰めます。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(968) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::saveImage<T>(const char *,const T *,int,int,int,ImageIO::ImageType)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(967): クラス テンプレート のメンバー関数 'bool Image<T>::imwrite(const char *,ImageIO::ImageType) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(174): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(180): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(182): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(187): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(189): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(192): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(130): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(218) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::BilinearInterpolate<T1,T2>(const T1 *,int,int,int,double,double,T2 *)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(131): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+         ColorWheel.cpp
+     1>ColorWheel.cpp(60): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>ColorWheel.cpp(61): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>ColorWheel.cpp(67): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>ColorWheel.cpp(68): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>ColorWheel.cpp(92): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>ColorWheel.cpp(93): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>ColorWheel.cpp(94): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>ColorWheel.cpp(96): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+         face.cpp
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>face.cpp(27): warning C4101: 'repeat' : ローカル変数は 1 度も使われていません。
+         FaceDetection.cpp
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\NoiseModel.h(6): warning C4005: 'PI' : マクロが再定義されました。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(16) : 'PI' の前の定義を確認してください
+     1>FaceDetection.cpp(94): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\OpticalFlow.h(68) : コンパイルされたクラスの テンプレート のインスタンス化 'Image<T>' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(745): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(835): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(833): クラス テンプレート のメンバー関数 'bool Image<T>::saveImage(std::ofstream &) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(875): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(861): クラス テンプレート のメンバー関数 'bool Image<T>::loadImage(std::ifstream &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(876): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(877): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(878): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(879): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(205): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(206): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(108): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(901) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadMatImage<T>(cv::Mat &,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(899): クラス テンプレート のメンバー関数 'bool Image<T>::matimread(cv::Mat &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(69): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(920) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadImage<T>(const char *,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(918): クラス テンプレート のメンバー関数 'bool Image<T>::imread(const char *)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(132): warning C4305: 'return' : 'int' から 'bool' へ切り詰めます。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(968) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::saveImage<T>(const char *,const T *,int,int,int,ImageIO::ImageType)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(967): クラス テンプレート のメンバー関数 'bool Image<T>::imwrite(const char *,ImageIO::ImageType) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(174): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(180): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(182): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(187): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(189): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(192): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(130): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(218) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::BilinearInterpolate<T1,T2>(const T1 *,int,int,int,double,double,T2 *)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(131): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+         GaussianPyramid.cpp
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>GaussianPyramid.cpp(50): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>GaussianPyramid.cpp(56): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>GaussianPyramid.cpp(64): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>GaussianPyramid.cpp(69): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>GaussianPyramid.cpp(87): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>GaussianPyramid.cpp(95): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>GaussianPyramid.cpp(100): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\GaussianPyramid.h(18) : コンパイルされたクラスの テンプレート のインスタンス化 'Image<T>' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(745): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(835): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(833): クラス テンプレート のメンバー関数 'bool Image<T>::saveImage(std::ofstream &) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(875): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(861): クラス テンプレート のメンバー関数 'bool Image<T>::loadImage(std::ifstream &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(876): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(877): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(878): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(879): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(763): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 GaussianPyramid.cpp(65) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::imresize<double>(Image<T> &,double) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 GaussianPyramid.cpp(65) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::imresize<double>(Image<T> &,double) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(764): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(205): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(206): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(108): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(901) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadMatImage<T>(cv::Mat &,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(899): クラス テンプレート のメンバー関数 'bool Image<T>::matimread(cv::Mat &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(69): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(920) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadImage<T>(const char *,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(918): クラス テンプレート のメンバー関数 'bool Image<T>::imread(const char *)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(132): warning C4305: 'return' : 'int' から 'bool' へ切り詰めます。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(968) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::saveImage<T>(const char *,const T *,int,int,int,ImageIO::ImageType)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(967): クラス テンプレート のメンバー関数 'bool Image<T>::imwrite(const char *,ImageIO::ImageType) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(174): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(180): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(182): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(187): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(189): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(192): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(130): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(218) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::BilinearInterpolate<T1,T2>(const T1 *,int,int,int,double,double,T2 *)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(131): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(341): warning C4101: 'offset' : ローカル変数は 1 度も使われていません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(1363) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::vfiltering<T1,T>(const T1 *,T2 *,int,int,int,const double *,int)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(1231) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::imfilter_hv<double>(Image<T> &,const double *,int,const double *,int) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(1231) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::imfilter_hv<double>(Image<T> &,const double *,int,const double *,int) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 GaussianPyramid.cpp(64) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::GaussianSmoothing<double>(Image<T> &,double,int) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 GaussianPyramid.cpp(64) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::GaussianSmoothing<double>(Image<T> &,double,int) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+         OpticalFlow.cpp
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\NoiseModel.h(6): warning C4005: 'PI' : マクロが再定義されました。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(16) : 'PI' の前の定義を確認してください
+     1>OpticalFlow.cpp(1169): warning C4244: '=' : 'const double' から 'unsigned short' への変換です。データが失われる可能性があります。
+     1>OpticalFlow.cpp(1170): warning C4244: '=' : 'const double' から 'unsigned short' への変換です。データが失われる可能性があります。
+     1>OpticalFlow.cpp(1181): warning C4244: '=' : 'const double' から 'unsigned short' への変換です。データが失われる可能性があります。
+     1>OpticalFlow.cpp(1182): warning C4244: '=' : 'const double' から 'unsigned short' への変換です。データが失われる可能性があります。
+     1>OpticalFlow.cpp(1199): warning C4244: '=' : 'const double' から 'unsigned char' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\OpticalFlow.h(68) : コンパイルされたクラスの テンプレート のインスタンス化 'Image<T>' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(745): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(835): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(833): クラス テンプレート のメンバー関数 'bool Image<T>::saveImage(std::ofstream &) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(875): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(861): クラス テンプレート のメンバー関数 'bool Image<T>::loadImage(std::ifstream &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(876): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(877): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(878): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(879): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(205): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(206): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(108): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(901) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadMatImage<T>(cv::Mat &,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(899): クラス テンプレート のメンバー関数 'bool Image<T>::matimread(cv::Mat &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(69): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(920) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadImage<T>(const char *,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(918): クラス テンプレート のメンバー関数 'bool Image<T>::imread(const char *)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(132): warning C4305: 'return' : 'int' から 'bool' へ切り詰めます。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(968) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::saveImage<T>(const char *,const T *,int,int,int,ImageIO::ImageType)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(967): クラス テンプレート のメンバー関数 'bool Image<T>::imwrite(const char *,ImageIO::ImageType) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(174): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(180): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(182): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(187): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(189): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(192): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(341): warning C4101: 'offset' : ローカル変数は 1 度も使われていません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(1363) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::vfiltering<T1,T>(const T1 *,T2 *,int,int,int,const double *,int)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T=double,
+                     T2=double
+                 ]
+                 OpticalFlow.cpp(50) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::imfilter_hv<double>(Image<T> &,const double *,int,const double *,int) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 OpticalFlow.cpp(50) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::imfilter_hv<double>(Image<T> &,const double *,int,const double *,int) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(130): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(485) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::BilinearInterpolate<T1,T1>(const T1 *,int,int,int,double,double,T2 *)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T2=double
+                 ]
+                 OpticalFlow.cpp(119) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::warpImage<T,T>(T1 *,const T1 *,const T1 *,const T2 *,const T2 *,int,int,int)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(131): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(2575): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(2514) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::warpImageBicubicRef<double,double>(const Image<T> &,Image<T> &,const Image<T> &,const Image<T> &,const Image<T> &,const Image<T> &,const Image<T> &) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(2514) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::warpImageBicubicRef<double,double>(const Image<T> &,Image<T> &,const Image<T> &,const Image<T> &,const Image<T> &,const Image<T> &,const Image<T> &) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 OpticalFlow.cpp(435) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::warpImageBicubicRef<double>(const Image<T> &,Image<T> &,const Image<T> &,const Image<T> &) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 OpticalFlow.cpp(435) : コンパイルされたクラスの テンプレート のインスタンス化 'void Image<T>::warpImageBicubicRef<double>(const Image<T> &,Image<T> &,const Image<T> &,const Image<T> &) const' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(2576): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(152): warning C4244: '=' : 'double' から 'unsigned short' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(152): warning C4244: '=' : 'double' から 'unsigned char' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(144): warning C4244: '+=' : 'double' から 'unsigned short' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(144): warning C4244: '+=' : 'double' から 'unsigned char' への変換です。データが失われる可能性があります。
+         OpticalFlowIO.cpp
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\NoiseModel.h(6): warning C4005: 'PI' : マクロが再定義されました。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(16) : 'PI' の前の定義を確認してください
+     1>OpticalFlowIO.cpp(93): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(94): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(111): warning C4244: '=' : 'double' から 'UINT8' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(119): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(120): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(128): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(129): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(131): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(132): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>OpticalFlowIO.cpp(172): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\OpticalFlow.h(68) : コンパイルされたクラスの テンプレート のインスタンス化 'Image<T>' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(745): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(835): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(833): クラス テンプレート のメンバー関数 'bool Image<T>::saveImage(std::ofstream &) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(875): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(861): クラス テンプレート のメンバー関数 'bool Image<T>::loadImage(std::ifstream &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(876): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(877): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(878): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(879): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(205): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(206): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(108): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(901) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadMatImage<T>(cv::Mat &,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(899): クラス テンプレート のメンバー関数 'bool Image<T>::matimread(cv::Mat &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(69): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(920) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadImage<T>(const char *,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(918): クラス テンプレート のメンバー関数 'bool Image<T>::imread(const char *)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(132): warning C4305: 'return' : 'int' から 'bool' へ切り詰めます。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(968) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::saveImage<T>(const char *,const T *,int,int,int,ImageIO::ImageType)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(967): クラス テンプレート のメンバー関数 'bool Image<T>::imwrite(const char *,ImageIO::ImageType) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(174): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(180): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(182): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(187): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(189): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(192): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(130): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(218) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::BilinearInterpolate<T1,T2>(const T1 *,int,int,int,double,double,T2 *)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(131): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+         Stochastic.cpp
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>Stochastic.cpp(35): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+         TestOpticalFlow.cpp
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\NoiseModel.h(6): warning C4005: 'PI' : マクロが再定義されました。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(16) : 'PI' の前の定義を確認してください
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\OpticalFlow.h(68) : コンパイルされたクラスの テンプレート のインスタンス化 'Image<T>' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(745): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(835): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(833): クラス テンプレート のメンバー関数 'bool Image<T>::saveImage(std::ofstream &) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(875): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(861): クラス テンプレート のメンバー関数 'bool Image<T>::loadImage(std::ifstream &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(876): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(877): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(878): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(879): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(205): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(206): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(108): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(901) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadMatImage<T>(cv::Mat &,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(899): クラス テンプレート のメンバー関数 'bool Image<T>::matimread(cv::Mat &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(69): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(920) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadImage<T>(const char *,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(918): クラス テンプレート のメンバー関数 'bool Image<T>::imread(const char *)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(132): warning C4305: 'return' : 'int' から 'bool' へ切り詰めます。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(968) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::saveImage<T>(const char *,const T *,int,int,int,ImageIO::ImageType)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(967): クラス テンプレート のメンバー関数 'bool Image<T>::imwrite(const char *,ImageIO::ImageType) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(174): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(180): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(182): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(187): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(189): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(192): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(130): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(218) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::BilinearInterpolate<T1,T2>(const T1 *,int,int,int,double,double,T2 *)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(131): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+         Video_Flow.cpp
+     1>c:\opencv\opencv\build\include\opencv2\flann\logger.h(66): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>C:\openCV\opencv\build\include\opencv2/legacy/compat.hpp : warning C4819: ファイルは、現在のコード ページ (932) で表示できない文字を含んでいます。データの損失を防ぐために、ファイルを Unicode 形式で保存してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(11): warning C4067: プリプロセッサ ディレクティブの後に余分な文字がありました - 改行が必要です
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\NoiseModel.h(6): warning C4005: 'PI' : マクロが再定義されました。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Stochastic.h(16) : 'PI' の前の定義を確認してください
+     1>Video_Flow.cpp(167): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : 'scanf' の宣言を確認してください。
+     1>Video_Flow.cpp(170): warning C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(290) : 'scanf' の宣言を確認してください。
+     1>Video_Flow.cpp(335): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(357): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(412): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(557): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(560): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(593): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(598): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(699): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(716): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(739): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(854): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : 'strtok' の宣言を確認してください。
+     1>Video_Flow.cpp(862): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(200) : 'strtok' の宣言を確認してください。
+     1>Video_Flow.cpp(891): warning C4267: '=' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>Video_Flow.cpp(934): warning C4101: 'tmp_endtime' : ローカル変数は 1 度も使われていません。
+     1>Video_Flow.cpp(934): warning C4101: 'tmp_starttime' : ローカル変数は 1 度も使われていません。
+     1>Video_Flow.cpp(1112): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1123): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1127): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1150): warning C4244: '初期化中' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1211): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(1214): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(218) : 'fopen' の宣言を確認してください。
+     1>Video_Flow.cpp(1374): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1375): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1392): warning C4244: '=' : 'double' から 'UINT8' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1400): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1401): warning C4244: '初期化中' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1409): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1410): warning C4244: '=' : 'int' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1412): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1413): warning C4244: '=' : 'double' から 'float' への変換です。データが失われる可能性があります。
+     1>Video_Flow.cpp(1454): warning C4244: '引数' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(744): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\OpticalFlow.h(68) : コンパイルされたクラスの テンプレート のインスタンス化 'Image<T>' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(745): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(835): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(833): クラス テンプレート のメンバー関数 'bool Image<T>::saveImage(std::ofstream &) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(875): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(861): クラス テンプレート のメンバー関数 'bool Image<T>::loadImage(std::ifstream &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(876): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(877): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(878): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\stdio.h(357) : 'sprintf' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(879): warning C4996: 'strcmpi': The POSIX name for this item is deprecated. Instead, use the ISO C++ conformant name: _strcmpi. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(248) : 'strcmpi' の宣言を確認してください。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(205): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(738): クラス テンプレート のメンバー関数 'bool Image<T>::imresize(double)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(206): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(108): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(901) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadMatImage<T>(cv::Mat &,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(899): クラス テンプレート のメンバー関数 'bool Image<T>::matimread(cv::Mat &)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+                 Video_Flow.cpp(619) : コンパイルされたクラスの テンプレート のインスタンス化 'bool Image<T>::matimread(cv::Mat &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(69): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(920) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::loadImage<T>(const char *,T *&,int &,int &,int &)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(918): クラス テンプレート のメンバー関数 'bool Image<T>::imread(const char *)' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(132): warning C4305: 'return' : 'int' から 'bool' へ切り詰めます。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(968) : コンパイルされたクラスの テンプレート のインスタンス化 'bool ImageIO::saveImage<T>(const char *,const T *,int,int,int,ImageIO::ImageType)' の参照を確認してください
+                 with
+                 [
+                     T=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(967): クラス テンプレート のメンバー関数 'bool Image<T>::imwrite(const char *,ImageIO::ImageType) const' のコンパイル中
+                 with
+                 [
+                     T=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(174): warning C4267: '初期化中' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(180): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(182): warning C4244: '=' : 'const double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(187): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(189): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageIO.h(192): warning C4244: '=' : 'double' から 'uchar' への変換です。データが失われる可能性があります。
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(130): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(218) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::BilinearInterpolate<T1,T2>(const T1 *,int,int,int,double,double,T2 *)' の参照を確認してください
+                 with
+                 [
+                     T1=double,
+                     T2=double
+                 ]
+                 c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\Image.h(748) : コンパイルされたクラスの テンプレート のインスタンス化 'void ImageProcessing::ResizeImage<T,T>(const T1 *,T2 *,int,int,int,double)' の参照を確認してください
+                 with
+                 [
+                     T=double,
+                     T1=double,
+                     T2=double
+                 ]
+     1>c:\users\将希\documents\visual studio 2012\projects\loglogcutter\consoleapplication2\ImageProcessing.h(131): warning C4244: '=' : 'double' から 'int' への変換です。データが失われる可能性があります。
+         wave.cpp
+     1>wave.cpp(103): warning C4267: '=' : 'size_t' から 'unsigned long' に変換しました。データが失われているかもしれません。
+     1>wave.cpp(92): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>wave.cpp(132): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(191) : 'strncpy' の宣言を確認してください。
+     1>wave.cpp(133): warning C4267: '=' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>wave.cpp(137): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(191) : 'strncpy' の宣言を確認してください。
+     1>wave.cpp(142): warning C4996: 'strncpy': This function or variable may be unsafe. Consider using strncpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\include\string.h(191) : 'strncpy' の宣言を確認してください。
+     1>wave.cpp(143): warning C4267: '=' : 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+     1>wave.cpp(147): warning C4101: 'e' : ローカル変数は 1 度も使われていません。
+     1>wave.cpp(161): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>wave.cpp(166): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>wave.cpp(174): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>wave.cpp(179): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>wave.cpp(199): warning C4267: '=' : 'size_t' から 'unsigned long' に変換しました。データが失われているかもしれません。
+     1>wave.cpp(227): warning C4267: '=' : 'size_t' から 'unsigned long' に変換しました。データが失われているかもしれません。
+     1>wave.cpp(232): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+     1>wave.cpp(239): warning C4018: '<' : signed と unsigned の数値を比較しようとしました。
+       ResourceCompile:
+         C:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe /l"0x0409" /nologo /fo"x64\Release\ConsoleApplication2.res" ConsoleApplication2.rc 
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\将希\Documents\Visual Studio 2012\Projects\LogLogCutter\x64\Release\ConsoleApplication2.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\openCV\opencv\build\x64\vc11\staticlib /LIBPATH:C:\openCV\opencv\build\x64\vc11\lib /LIBPATH:C:\openCV\opencv\build\x64\vc11\dammy kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\将希\Documents\Visual Studio 2012\Projects\LogLogCutter\x64\Release\ConsoleApplication2.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\将希\Documents\Visual Studio 2012\Projects\LogLogCutter\x64\Release\ConsoleApplication2.lib" /MACHINE:X64 x64\Release\ConsoleApplication2.res
+         x64\Release\Coarse2FineTwoFrames.obj
+         x64\Release\ColorWheel.obj
+         x64\Release\face.obj
+         x64\Release\FaceDetection.obj
+         x64\Release\GaussianPyramid.obj
+         x64\Release\OpticalFlow.obj
+         x64\Release\OpticalFlowIO.obj
+         x64\Release\stdafx.obj
+         x64\Release\Stochastic.obj
+         x64\Release\TestOpticalFlow.obj
+         x64\Release\Video_Flow.obj
+         x64\Release\wave.obj
+         コード生成しています。
+         コード生成が終了しました。
+         ConsoleApplication2.vcxproj -> C:\Users\将希\Documents\Visual Studio 2012\Projects\LogLogCutter\x64\Release\ConsoleApplication2.exe
+     1>プロジェクト "C:\Users\将希\Documents\Visual Studio 2012\Projects\LogLogCutter\ConsoleApplication2\ConsoleApplication2.vcxproj" (Build ターゲット) のビルドが完了しました。
 
 ビルドに成功しました。
 
-経過時間 00:00:00.54
+経過時間 00:00:13.37

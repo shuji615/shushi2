@@ -84,6 +84,7 @@ public:
 	double VolumeChangeSum;
 	double VolumeAndFlowMixPriority;
 	bool ExclusionFlag;
+
 	
 	// 比較関数
     static bool flow_cmp(Shot a, Shot b)
