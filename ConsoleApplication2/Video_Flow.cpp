@@ -58,9 +58,12 @@
 #define FRAME 30000
 #define OpticalFlowUnCuttableRate 0.3
 #define VolumeSmoothRange 1
-#define VolumeAveRange 0.1//秒単位
+#define VolumeAveRange 0.01//秒単位
 #define FLOWTHRE 1.3
 #define AdinVolumeThreshold 4500
+#define VolumeThre 250
+#define BestN 10
+#define MaxTime 15
 
 #include "cv.h"
 #include "highgui.h"
@@ -83,6 +86,7 @@ public:
 	double FlowDirection;
 	double VolumeChangeSum;
 	double VolumeAndFlowMixPriority;
+	double VolumeChangeThreSum;
 	bool ExclusionFlag;
 
 	
@@ -114,10 +118,15 @@ public:
     {
 		return (a.StartTime < b.StartTime); 
     }
+	static bool VolumeChangeThreSum_cmp(Shot a, Shot b)
+    {
+		return (a.VolumeChangeThreSum > b.VolumeChangeThreSum); 
+    }
 
 	void set_FlowAverage(double in){FlowAverage = in;}
 	void set_VolumeAverage(double in){VolumeAverage = in;}
 	void set_VolumeChangeSum(double in){VolumeChangeSum = in;}
+	void set_VolumeChangeThreSum(double in){VolumeChangeThreSum = in;}
 	void set_StartTime(double in){StartTime = in;}
 	void set_EndTime(double in){EndTime = in;}
 	void set_FlowDirection(double in){FlowDirection = in;}
@@ -156,61 +165,22 @@ void MakeMonoFile(char* filename);
 void tmp();
 vector<Shot> CutSpeechArea(vector<Shot> &speechareas,double maxtime,int joint_start,int joint_end);
 void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &continuityareas, int mode);
+void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename, double threshold);
+void CutAndDefinePriority(char* filename);
+void ExtendSpeechAreas(vector<Shot> &speechareas);
 
 int main(int argc, char*argv[]){
 
-	int type;
 	string filename;
-	if(argc <3){
-		cout << "モード選択" << endl;
-		cout << "1 : メタファイル作成（CLFlow + 発話区間推定） + ピックアップ区間決定" <<  endl;
-
-		scanf("%d",&type);
+	if(argc <2){
 		cout << "ファイル名を入力してください" << endl;
 		char tmp_name[50];
 		scanf("%s",tmp_name);
 		filename = tmp_name;
 	}else{
-		type = atoi(argv[1]);
-		filename = argv[2];
+		filename = argv[1];
 	}
-	switch (type)
-	{
-	case 1:
-		//1:音声
-		//2:オプティカルフロー
-
-		//1:伸ばす
-		//2:縮める
-		CutAndDefinePriority((char*)filename.c_str(),2,0,1,1);
-		CutAndDefinePriority((char*)filename.c_str(),2,0,1,2);
-
-		//degug
-		//CutAndDefinePriority((char*)filename.c_str(),1,-1,0,1);
-
-		//normal
-		//CutAndDefinePriority((char*)filename.c_str(),1,1,0,1);
-		//CutAndDefinePriority((char*)filename.c_str(),2,0,1,1);
-		//reverse
-		//CutAndDefinePriority((char*)filename.c_str(),1,0,1,1);
-		//CutAndDefinePriority((char*)filename.c_str(),2,1,0,1);
-		break;
-	case 2:
-		OpticalFlowBasedCutandAdjustShots((char*)filename.c_str());
-		SoundBasedAreaCut((char*)filename.c_str());
-		break;
-	case 3:
-		OpticalFlowBasedCutandAdjustShots((char*)filename.c_str());
-		//Username_CLFlow_sum.txt があることを前提として，オプティカルフローベースのカット
-		//（発話区間はカットの瞬間にしないように処理）
-		break;
-	case 4:
-//		CLFlow((char*)filename.c_str());
-//		tmp();
-		break;
-	default:
-		break;
-	}
+	CutAndDefinePriority((char*)filename.c_str());
 }
 
 vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
@@ -310,44 +280,12 @@ vector<Shot> MakeShotBaseBySpeech(char* filename,double speechinterval, int shot
 
 	//発話間隔がspeechinterval秒以内だったら，一つにつなげる
 	JointSpeechAreas(speecharea,speechinterval,shotmaxtime);
+
+	//前の発話箇所まで，あるいは２秒間区間を広げる
+	ExtendSpeechAreas(speecharea);
+
 	return speecharea;
 }
-
-int OpticalFlowBasedCutandAdjustShots(char* filename){
-
-	//ベース
-	//オプティカルフローをベースにショットを作成
-	vector<Shot> OpticalFlowMinArea = MakeShotBaseByOpticalFlow(filename);
-
-	//speechareaを作る
-	vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,15);
-
-	//speechareaから，発話の途中でショットがカットされないように調整
-	AdjustCutAreaBySpeechArea(OpticalFlowMinArea,speecharea,2);
-
-	//flowの１５秒の平均が小さい順にソート
-	//（FlowMinがもともと１５秒平均の値であることに注意）
-	std::sort(OpticalFlowMinArea.begin(), OpticalFlowMinArea.end(), &Shot::flow_cmp);
-
-	//結果をファイルに保存
-	FILE *output_optbasecut;
-	ostringstream oss_output_optbasecut;
-	oss_output_optbasecut  << "digestmeta\\" << filename << "\\" << filename << "_optical_flow_base_cut.txt";
-	output_optbasecut = fopen(oss_output_optbasecut.str().c_str(), "w");
-
-	fprintf(output_optbasecut,"\t\n");
-
-	for(int i=0;i<10;i++){
-		ostringstream tmp;
-		tmp << OpticalFlowMinArea[i].StartTime << "\t" << OpticalFlowMinArea[i].EndTime << "\t" << endl; 
-//			(int)OpticalFlowMinArea[i].StartTime/60  << " : " << (int)OpticalFlowMinArea[i].StartTime%60 <<
-//			" - " << (int)OpticalFlowMinArea[i].EndTime/60 << " : " << (int)OpticalFlowMinArea[i].EndTime%60 << endl;
-
-		fprintf(output_optbasecut,tmp.str().c_str());
-	}
-    return 0;
-}
-
 void MakeMonoFile(char* filename){
 
 	int ret;
@@ -370,61 +308,6 @@ void MakeMonoFile(char* filename){
 
 }
 
-int SoundBasedAreaCut(char* filename){
-
-	//ベース
-	//発話区間をadintoolで計算し， speecharea に入れる
-	vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,15);
-
-	//調整
-	//7秒に満たないものは除外する
-	for(int i=0;i<speecharea.size();){
-		if( (speecharea[i].EndTime - speecharea[i].StartTime) < 7){
-			speecharea.erase(speecharea.begin()+i);
-		}else{
-			i++;
-		}
-	}
-
-	//CLFlow_sumから，FlowAverageを計算
-	CalcFlowAve(speecharea,filename);
-
-	//FlowAverageを基に，あまりに動きが大きいところは区間から除外するようにする
-	for(auto shot = speecharea.begin() ; shot !=speecharea.end() ; ){
-		if(shot->FlowAverage > FLOWTHRE){
-			speecharea.erase(shot);
-		}else{
-			shot++;
-		}
-	}
-
-
-	//ソート
-	//VolumeAverageを計算
-	CalcVolumeChangeAveandSum(speecharea,filename);
-
-	//VolumeChangeSumを基に，大きい順にソート
-	std::sort(speecharea.begin(), speecharea.end(), &Shot::volumeChangeSum_cmp);
-
-	//結果をファイルに保存
-	FILE *output_soundbasecut;
-	ostringstream oss_output_soundbasecut;
-	oss_output_soundbasecut  << "digestmeta\\" << filename << "\\" << filename << "_sound_base_cut.txt";
-	output_soundbasecut = fopen(oss_output_soundbasecut.str().c_str(), "w");
-
-	fprintf(output_soundbasecut,"\t\n");
-	for(int i=0;i<10;i++){
-		ostringstream tmp;
-		tmp << speecharea[i].StartTime << "\t" << speecharea[i].EndTime << "\t" << endl ;
-//		<< (int)speecharea[i].StartTime/60  << " : " << (int)speecharea[i].StartTime%60 <<
-//			" - " << (int)speecharea[i].EndTime/60 << " : " << (int)speecharea[i].EndTime%60 << endl;
-
-		fprintf(output_soundbasecut,tmp.str().c_str());
-	}
-
-	return 0;
-}
-
 void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double optflow_ratio, int adjustmode){
 	//Baseが1なら，speech
 	//Baseが2なら，OpticalFlow
@@ -435,7 +318,7 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 	if(Base == 1){
 		cout << "Speech Base Cut Start!!" << endl;
 		cout << "ベース作り開始" << endl;
-		shots = MakeShotBaseBySpeech(filename,2,15);
+		shots = MakeShotBaseBySpeech(filename,2,MaxTime);
 	}else{
 		cout << "Optical Flow Base Cut Start!!" << endl;
 		cout << "ベース作り開始" << endl;
@@ -510,7 +393,7 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 
 	}else{
 		//speechareaを作る
-		vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,15);
+		vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,MaxTime);
 
 		cout << shots.size() << endl;
 		//speechareaから，発話の途中でショットがカットされないように調整
@@ -548,6 +431,7 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 	CalcFlowDirection(shots,filename);			//ショットのFlowDirectionの平均を計算（使わなさそう）
 	CalcVolumeAndFlowMixPriority(shots,volume_ratio,optflow_ratio);					//volume_ratio,optflow_ratioの比で優先度を定義
 	std::sort(shots.begin(), shots.end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+//	std::sort(shots.begin(), shots.end(), &Shot::VolumeChangeThreSum_cmp);	
 
 	//結果をファイルに保存
 	cout << "ファイル出力開始" << endl;
@@ -570,6 +454,228 @@ void CutAndDefinePriority(char* filename, int Base, double volume_ratio, double 
 	}
 }
 
+void CutAndDefinePriority(char* filename){
+	//shot[1]：speech
+	//shot[2]：OpticalFlow
+
+	//ベース作り
+	cout << "ベース作り開始" << endl;
+
+	vector<Shot> shots[2];
+	shots[0] = MakeShotBaseBySpeech(filename,2,MaxTime);
+	shots[1] = MakeShotBaseByOpticalFlow(filename);
+
+	//範囲の調整
+	cout << "範囲調整開始" << endl;
+
+
+	//発話
+	//7秒に満たないものは除外する
+	for(int i=0;i<shots[0].size();){
+		if( (shots[0][i].EndTime - shots[0][i].StartTime) < 7){
+			shots[0].erase(shots[0].begin()+i);
+		}else{
+			i++;
+		}
+	}
+	//CLFlow_sumから，FlowAverageを計算
+	CalcFlowAve(shots[0],filename);
+
+	//CLFlowの全体の平均と分散を計算
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	std::ifstream ifs(oss.str().c_str());
+
+	//CLFlowの結果をRawDataにいったん格納し，その後移動平均を取ってMAveDataに格納
+	std::vector<double> RawData;
+	std::vector<double> MAveData;
+	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+	double average=0, dispersion=0;
+	for(int i=0;i<RawData.size()-MAveWidth;i++){
+		for(int j=0;j<MAveWidth;j++){
+			if(j==0){
+				MAveData.push_back(RawData[i+j]);
+			}else{
+				MAveData[i] += RawData[i+j];
+			}
+		}
+		MAveData[i] /= MAveWidth;
+		average += MAveData[i];
+	}
+	average /= MAveData.size();
+
+	for(int i=0;i<MAveData.size();i++){
+		dispersion += pow( MAveData[i] - average , 2) ;
+	}
+	dispersion = sqrt(dispersion / MAveData.size() );
+
+	const double THRE = average + dispersion;//MAveDataの平均から１σを閾値と定義		
+
+	//FlowAverageを基に，あまりに動きが大きいところは区間から除外するようにする
+	for(auto shot = shots[0].begin() ; shot !=shots[0].end() ; ){
+		if(shot->FlowAverage > THRE){
+			shots[0].erase(shot);
+		}else{
+			shot++;
+		}
+	}
+
+	//被っている時間が半分以上ある場合は，VolumeChangeAveandSumの値が大きい方を残して，小さい方を消す
+	CalcVolumeChangeAveandSum(shots[0],filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
+	for(int i=0;i<shots[0].size()-1;i++){
+		if((shots[0][i].StartTime + (shots[0][i].EndTime - shots[0][i].StartTime)/2 ) > shots[0][i+1].StartTime){
+			if(shots[0][i].VolumeChangeSum > shots[0][i+1].VolumeChangeSum){
+				shots[0].erase(shots[0].begin()+i+1);
+			}else{
+				shots[0].erase(shots[0].begin()+i);
+			}
+		}
+	}
+
+
+
+	//オプティカルフロー
+	//speechareaを作る
+	vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,MaxTime);
+
+	cout << shots[1].size() << endl;
+	//speechareaから，発話の途中でショットがカットされないように調整
+	AdjustCutAreaBySpeechArea(shots[1],speecharea,1);
+
+	//7秒に満たないものは除外する
+	for(int i=0;i<shots[1].size();){
+		if( (shots[1][i].EndTime - shots[1][i].StartTime) < 7){
+			shots[1].erase(shots[1].begin()+i);
+		}else{
+			i++;
+		}
+	}
+
+	//被っている時間が半分以上ある場合は，FlowAveの値が小さい方を残して，大きい方を消す
+	CalcFlowAve(shots[1],filename);
+	for(int i=0;i<shots[1].size()-1;){
+		if((shots[1][i].StartTime + (shots[1][i].EndTime - shots[1][i].StartTime)/2 ) > shots[1][i+1].StartTime){
+			if(shots[1][i].FlowAverage < shots[1][i+1].FlowAverage){
+				shots[1].erase(shots[1].begin()+i+1);
+			}else{
+				shots[1].erase(shots[1].begin()+i);
+			}
+		}else{
+			i++;
+		}
+	}
+
+	
+	//ソート
+	cout << "ソート開始" << endl;
+	CalcFlowAve(shots[1],filename);				//ショットのオプティカルフローの平均を計算 .FlowAve
+	CalcVolumeChangeAveandSum(shots[1],filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
+	CalcFlowDirection(shots[1],filename);			//ショットのFlowDirectionの平均を計算（使わなさそう）
+
+	cout << "ファイル出力開始" << endl;
+
+	vector<Shot> all_result_time_sort;
+
+	//結果をファイルに保存
+	FILE *output[2][3];
+	FILE *output_all;
+
+	ostringstream oss_output[2][3];
+	ostringstream oss_all;
+
+	oss_output[0][0]  << "digestmeta\\" << filename << "\\" << filename << "_sound_cut_";
+	oss_output[0][1]  << "digestmeta\\" << filename << "\\" << filename << "_sound_cut_";
+	oss_output[0][2]  << "digestmeta\\" << filename << "\\" << filename << "_sound_cut_";
+
+	oss_output[1][0]  << "digestmeta\\" << filename << "\\" << filename << "_opt_cut_";
+	oss_output[1][1]  << "digestmeta\\" << filename << "\\" << filename << "_opt_cut_";
+	oss_output[1][2]  << "digestmeta\\" << filename << "\\" << filename << "_opt_cut_";
+
+	oss_all  << "digestmeta\\" << filename << "\\" << filename << "_all_cut_all_sort.txt";
+	output_all = fopen(oss_all.str().c_str(), "w");
+
+	for(int j=0;j<2;j++){
+		oss_output[j][0]  << "opt_sort.txt";
+		oss_output[j][1]  << "sound_sort.txt";
+		oss_output[j][2]  << "sound_thre_sort.txt";
+
+		output[j][0] = fopen(oss_output[j][0].str().c_str(), "w");
+		output[j][1] = fopen(oss_output[j][1].str().c_str(), "w");
+		output[j][2] = fopen(oss_output[j][2].str().c_str(), "w");
+
+		vector<Shot> Best5s;
+
+		//オプティカルフローソート
+		CalcVolumeAndFlowMixPriority(shots[j],0,1);										//volume_ratio,optflow_ratioの比で優先度を定義
+		std::sort(shots[j].begin(), shots[j].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+		for(int i=0;i<shots[j].size();i++){
+			ostringstream tmp;
+			tmp << shots[j][i].StartTime << "\t" << shots[j][i].EndTime << "\t" << endl ;
+
+			fprintf(output[j][0],tmp.str().c_str());
+		}
+		for(int i=0;i<BestN;i++){
+			all_result_time_sort.push_back(shots[j][i]);
+		}
+
+		//音量ソート
+		CalcVolumeAndFlowMixPriority(shots[j],1,0);										//volume_ratio,optflow_ratioの比で優先度を定義
+		std::sort(shots[j].begin(), shots[j].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+		for(int i=0;i<shots[j].size();i++){
+			ostringstream tmp;
+			tmp << shots[j][i].StartTime << "\t" << shots[j][i].EndTime << "\t" << endl ;
+
+			fprintf(output[j][1],tmp.str().c_str());
+		}
+		for(int i=0;i<BestN;i++){
+			all_result_time_sort.push_back(shots[j][i]);
+		}
+
+		//スレッショルドあり音量ソート
+		std::sort(shots[j].begin(), shots[j].end(), &Shot::VolumeChangeThreSum_cmp);	
+		for(int i=0;i<shots[j].size();i++){
+			ostringstream tmp;
+			tmp << shots[j][i].StartTime << "\t" << shots[j][i].EndTime << "\t" << endl ;
+
+			fprintf(output[j][2],tmp.str().c_str());
+		}
+		for(int i=0;i<BestN;i++){
+			all_result_time_sort.push_back(shots[j][i]);
+		}
+	}
+	//スレッショルドあり音量ソート
+	std::sort(all_result_time_sort.begin(), all_result_time_sort.end(), &Shot::StartTime_cmp);
+
+	double before = -1;
+	for(int i=0;i<all_result_time_sort.size();i++){
+		if(before != all_result_time_sort[i].StartTime){
+			ostringstream tmp;
+			tmp << all_result_time_sort[i].StartTime << "\t" << all_result_time_sort[i].EndTime << "\t" << endl ;
+			fprintf(output_all,tmp.str().c_str());
+		}
+		before = all_result_time_sort[i].StartTime;
+	}
+
+}
+
+void ExtendSpeechAreas(vector<Shot> &speechareas){
+	vector<Shot> speech_copy(speechareas.size());//サイズを確保して宣言
+	std::copy(speechareas.begin(),speechareas.end(),speech_copy.begin());//複製
+	for(int i=1;i<speechareas.size()-1;i++){
+		if(speech_copy[i-1].EndTime - speech_copy[i].StartTime > 2){
+			speechareas[i].set_StartTime( speechareas[i].StartTime -2  );
+		}else{
+			speechareas[i].set_StartTime(speech_copy[i-1].EndTime);
+		}
+
+		if(speech_copy[i+1].StartTime - speech_copy[i].EndTime > 2){
+			speechareas[i].set_EndTime(speechareas[i].StartTime+2);
+		}else{
+			speechareas[i].set_EndTime(speech_copy[i+1].StartTime);
+		}
+	}
+}
 
 void CLFlow(char* filename){
 
@@ -669,27 +775,6 @@ void CLFlow(char* filename){
 		curr.copyTo(prev);
 	}
 
-}
-
-void tmp(){
-	for(int i=0;i<10;i++){
-		Mat x,y;
-		ostringstream osstmp1,osstmp2;
-		osstmp1 << "digestmeta\\kihara\\x_" << i+1 <<".jpg";
-		osstmp2 << "digestmeta\\kihara\\y_" << i+1 <<".jpg";
-		x =imread(osstmp1.str().c_str());
-		y =imread(osstmp2.str().c_str());
-
-		Mat magnitude, angle;
-		cartToPolar(x, y, magnitude, angle, true);
-
-		Mat mat_ir;
-		magnitude.convertTo(mat_ir, CV_8UC1, 255.0);
-
-		ostringstream osstmp;
-		osstmp << "digestmeta\\kihara\\" << i+1 <<".png";
-		cv::imwrite(osstmp.str().c_str(),mat_ir);
-	}
 }
 
 void DetectSpeechArea(char* filename, int volumethreshold, int speechinterval){
@@ -1073,12 +1158,14 @@ vector<double> CalcMoveAve(vector<short> inputvector, int Range){
 vector<double> CalcAve(vector<short> inputvector, int Range){
 	vector<double> AveResult;
 	double tmp=0;
-	int counter=0;
+	double counter=0;
 	for(int i=0;i<inputvector.size();i++){
 		tmp += abs(inputvector[i]);
+		counter++;
 		if( (i+1)%Range == 0 || i == inputvector.size()-1 ){
-			AveResult.push_back(tmp);
+			AveResult.push_back(tmp / counter);
 			tmp = 0;
+			counter = 0;
 		}
 	}
 	return AveResult;
@@ -1117,7 +1204,7 @@ void CalcFlowAve(vector<Shot> &shots, char* filename){
 	}
 }
 
-void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
+void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename, double threshold){
 
 	vector<short> videovolume = readwave(filename);
 	const int SamplingRate = samplingrateofwave(filename);
@@ -1126,12 +1213,35 @@ void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
 	for(int j=0;j<shots.size();j++){
 		double volume = 0;
 		for(int i = (shots[j].StartTime / VolumeAveRange );i<(shots[j].EndTime / VolumeAveRange)-1 ; i++){
-			volume += abs( videovolume_ave[i] - videovolume_ave[i+1] ) ; 
+			if(double tmp = abs( videovolume_ave[i] - videovolume_ave[i+1] ) < threshold)
+			volume += tmp ; 
 		}
-		shots[j].set_VolumeAverage( volume / (shots[j].EndTime - shots[j].StartTime) / SamplingRate );
+		shots[j].set_VolumeAverage( volume / (shots[j].EndTime - shots[j].StartTime) * VolumeAveRange );
 		shots[j].set_VolumeChangeSum(volume);
 	}
 }
+
+void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
+
+	vector<short> videovolume = readwave(filename);
+	const int SamplingRate = samplingrateofwave(filename);
+	vector<double> videovolume_ave = CalcAve(videovolume,SamplingRate*VolumeAveRange);
+
+	for(int j=0;j<shots.size();j++){
+		double volume = 0;
+		double volumeUnderThre = 0;
+		for(int i = (shots[j].StartTime / VolumeAveRange );i<(shots[j].EndTime / VolumeAveRange)-1 ; i++){
+			volume += abs( videovolume_ave[i] - videovolume_ave[i+1] ) ; 
+			if(double tmp = abs( videovolume_ave[i] - videovolume_ave[i+1] ) < VolumeThre){
+				volumeUnderThre += tmp ; 
+			}
+		}
+		shots[j].set_VolumeAverage( volume / (shots[j].EndTime - shots[j].StartTime) * VolumeAveRange );
+		shots[j].set_VolumeChangeSum(volume);
+		shots[j].set_VolumeChangeThreSum(volumeUnderThre);
+	}
+}
+
 
 void CalcFlowDirection(vector<Shot> &shots, char* filename){
 
@@ -1485,3 +1595,118 @@ int OpenCVSampleFlow(char* filename)
 	next.copyTo(prev);
 
 }
+
+/*
+int OpticalFlowBasedCutandAdjustShots(char* filename){
+
+	//ベース
+	//オプティカルフローをベースにショットを作成
+	vector<Shot> OpticalFlowMinArea = MakeShotBaseByOpticalFlow(filename);
+
+	//speechareaを作る
+	vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,MaxTime);
+
+	//speechareaから，発話の途中でショットがカットされないように調整
+	AdjustCutAreaBySpeechArea(OpticalFlowMinArea,speecharea,2);
+
+	//flowの１５秒の平均が小さい順にソート
+	//（FlowMinがもともと１５秒平均の値であることに注意）
+	std::sort(OpticalFlowMinArea.begin(), OpticalFlowMinArea.end(), &Shot::flow_cmp);
+
+	//結果をファイルに保存
+	FILE *output_optbasecut;
+	ostringstream oss_output_optbasecut;
+	oss_output_optbasecut  << "digestmeta\\" << filename << "\\" << filename << "_optical_flow_base_cut.txt";
+	output_optbasecut = fopen(oss_output_optbasecut.str().c_str(), "w");
+
+	fprintf(output_optbasecut,"\t\n");
+
+	for(int i=0;i<10;i++){
+		ostringstream tmp;
+		tmp << OpticalFlowMinArea[i].StartTime << "\t" << OpticalFlowMinArea[i].EndTime << "\t" << endl; 
+//			(int)OpticalFlowMinArea[i].StartTime/60  << " : " << (int)OpticalFlowMinArea[i].StartTime%60 <<
+//			" - " << (int)OpticalFlowMinArea[i].EndTime/60 << " : " << (int)OpticalFlowMinArea[i].EndTime%60 << endl;
+
+		fprintf(output_optbasecut,tmp.str().c_str());
+	}
+    return 0;
+}
+*/
+/*
+void tmp(){
+	for(int i=0;i<10;i++){
+		Mat x,y;
+		ostringstream osstmp1,osstmp2;
+		osstmp1 << "digestmeta\\kihara\\x_" << i+1 <<".jpg";
+		osstmp2 << "digestmeta\\kihara\\y_" << i+1 <<".jpg";
+		x =imread(osstmp1.str().c_str());
+		y =imread(osstmp2.str().c_str());
+
+		Mat magnitude, angle;
+		cartToPolar(x, y, magnitude, angle, true);
+
+		Mat mat_ir;
+		magnitude.convertTo(mat_ir, CV_8UC1, 255.0);
+
+		ostringstream osstmp;
+		osstmp << "digestmeta\\kihara\\" << i+1 <<".png";
+		cv::imwrite(osstmp.str().c_str(),mat_ir);
+	}
+}
+*/
+/*
+int SoundBasedAreaCut(char* filename){
+
+	//ベース
+	//発話区間をadintoolで計算し， speecharea に入れる
+	vector<Shot> speecharea = MakeShotBaseBySpeech(filename,2,15);
+
+	//調整
+	//7秒に満たないものは除外する
+	for(int i=0;i<speecharea.size();){
+		if( (speecharea[i].EndTime - speecharea[i].StartTime) < 7){
+			speecharea.erase(speecharea.begin()+i);
+		}else{
+			i++;
+		}
+	}
+
+	//CLFlow_sumから，FlowAverageを計算
+	CalcFlowAve(speecharea,filename);
+
+	//FlowAverageを基に，あまりに動きが大きいところは区間から除外するようにする
+	for(auto shot = speecharea.begin() ; shot !=speecharea.end() ; ){
+		if(shot->FlowAverage > FLOWTHRE){
+			speecharea.erase(shot);
+		}else{
+			shot++;
+		}
+	}
+
+
+	//ソート
+	//VolumeAverageを計算
+	CalcVolumeChangeAveandSum(speecharea,filename);
+
+	//VolumeChangeSumを基に，大きい順にソート
+	std::sort(speecharea.begin(), speecharea.end(), &Shot::volumeChangeSum_cmp);
+
+	//結果をファイルに保存
+	FILE *output_soundbasecut;
+	ostringstream oss_output_soundbasecut;
+	oss_output_soundbasecut  << "digestmeta\\" << filename << "\\" << filename << "_sound_base_cut.txt";
+	output_soundbasecut = fopen(oss_output_soundbasecut.str().c_str(), "w");
+
+	fprintf(output_soundbasecut,"\t\n");
+	for(int i=0;i<10;i++){
+		ostringstream tmp;
+		tmp << speecharea[i].StartTime << "\t" << speecharea[i].EndTime << "\t" << endl ;
+//		<< (int)speecharea[i].StartTime/60  << " : " << (int)speecharea[i].StartTime%60 <<
+//			" - " << (int)speecharea[i].EndTime/60 << " : " << (int)speecharea[i].EndTime%60 << endl;
+
+		fprintf(output_soundbasecut,tmp.str().c_str());
+	}
+
+	return 0;
+}
+*/
