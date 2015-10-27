@@ -566,7 +566,6 @@ void CutAndDefinePriority(char* filename){
 		}
 	}
 
-	
 	//ソート
 	cout << "ソート開始" << endl;
 	CalcFlowAve(shots[1],filename);				//ショットのオプティカルフローの平均を計算 .FlowAve
@@ -577,12 +576,27 @@ void CutAndDefinePriority(char* filename){
 
 	vector<Shot> all_result_time_sort;
 
+
+	////デバッグ
+	FILE *output_debug;
+	ostringstream oss_debug;
+	oss_debug << "digestmeta\\" << filename << "\\" << filename << "_debug.txt";
+	output_debug = fopen(oss_debug.str().c_str(), "w");
+	for(int i=0;i<shots[0].size();i++){
+		fprintf(output_debug ,"%lf\t%lf\t%lf\n",shots[0][i].FlowAverage,shots[0][i].VolumeChangeSum,shots[0][i].VolumeChangeThreSum);
+	}
+	for(int i=0;i<shots[1].size();i++){
+		fprintf(output_debug ,"%lf\t%lf\t%lf\n",shots[0][i].FlowAverage,shots[0][i].VolumeChangeSum,shots[0][i].VolumeChangeThreSum);
+	}
+	////デバッグ
+
+
 	//結果をファイルに保存
 	FILE *output[2][3];
-	FILE *output_all;
+	FILE *output_all,*output_alldata;
 
 	ostringstream oss_output[2][3];
-	ostringstream oss_all;
+	ostringstream oss_all,oss_alldata;
 
 	oss_output[0][0]  << "digestmeta\\" << filename << "\\" << filename << "_sound_cut_";
 	oss_output[0][1]  << "digestmeta\\" << filename << "\\" << filename << "_sound_cut_";
@@ -594,6 +608,10 @@ void CutAndDefinePriority(char* filename){
 
 	oss_all  << "digestmeta\\" << filename << "\\" << filename << "_all_cut_all_sort.txt";
 	output_all = fopen(oss_all.str().c_str(), "w");
+
+	oss_alldata  << "digestmeta\\" << filename << "\\" << filename << "_alldata.txt";
+	output_alldata = fopen(oss_alldata.str().c_str(), "w");
+	fprintf(output_alldata ,"オプティカルフロー\t音量積分\t音量閾値有積分\n");
 
 	for(int j=0;j<2;j++){
 		oss_output[j][0]  << "opt_sort.txt";
@@ -650,9 +668,13 @@ void CutAndDefinePriority(char* filename){
 	double before = -1;
 	for(int i=0;i<all_result_time_sort.size();i++){
 		if(before != all_result_time_sort[i].StartTime){
-			ostringstream tmp;
-			tmp << all_result_time_sort[i].StartTime << "\t" << all_result_time_sort[i].EndTime << "\t" << endl ;
-			fprintf(output_all,tmp.str().c_str());
+			ostringstream tmp1,tmp2;
+			tmp1 << all_result_time_sort[i].StartTime << "\t" << all_result_time_sort[i].EndTime << "\t" << endl ;
+			fprintf(output_all,tmp1.str().c_str());
+
+			tmp2 << all_result_time_sort[i].StartTime << "\t" << all_result_time_sort[i].EndTime << "\t"  << all_result_time_sort[i].FlowAverage << "\t" << all_result_time_sort[i].VolumeChangeSum << "\t" << all_result_time_sort[i].VolumeChangeThreSum <<  endl ;
+			fprintf(output_alldata,tmp2.str().c_str());
+
 		}
 		before = all_result_time_sort[i].StartTime;
 	}
