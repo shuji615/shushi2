@@ -86,7 +86,8 @@ public:
 	double FlowDirection;
 	double VolumeChangeSum;
 	double VolumeAndFlowMixPriority;
-	double VolumeChangeThreSum;
+	double VolumeChangeThreUnderSum;
+	double VolumeChangeThreOverSum;
 	bool ExclusionFlag;
 
 	
@@ -105,11 +106,6 @@ public:
 		return (a.VolumeAverage > b.VolumeAverage); 
     } 
 
-	static bool volumeChangeSum_cmp(Shot a, Shot b)
-    {
-		return (a.VolumeChangeSum > b.VolumeChangeSum); 
-    } 
-
 	static bool VolumeAndFlowMixPriority_cmp(Shot a, Shot b)
     {
 		return (a.VolumeAndFlowMixPriority > b.VolumeAndFlowMixPriority); 
@@ -118,15 +114,20 @@ public:
     {
 		return (a.StartTime < b.StartTime); 
     }
-	static bool VolumeChangeThreSum_cmp(Shot a, Shot b)
+	static bool VolumeChangeThreOverSum_cmp(Shot a, Shot b)
     {
-		return (a.VolumeChangeThreSum > b.VolumeChangeThreSum); 
+		return (a.VolumeChangeThreOverSum > b.VolumeChangeThreOverSum); 
+    }
+	static bool VolumeChangeThreUnderSum_cmp(Shot a, Shot b)
+    {
+		return (a.VolumeChangeThreUnderSum > b.VolumeChangeThreUnderSum); 
     }
 
 	void set_FlowAverage(double in){FlowAverage = in;}
 	void set_VolumeAverage(double in){VolumeAverage = in;}
 	void set_VolumeChangeSum(double in){VolumeChangeSum = in;}
-	void set_VolumeChangeThreSum(double in){VolumeChangeThreSum = in;}
+	void set_VolumeChangeThreOverSum(double in){VolumeChangeThreOverSum = in;}
+	void set_VolumeChangeThreUnderSum(double in){VolumeChangeThreUnderSum = in;}
 	void set_StartTime(double in){StartTime = in;}
 	void set_EndTime(double in){EndTime = in;}
 	void set_FlowDirection(double in){FlowDirection = in;}
@@ -199,9 +200,12 @@ int main(int argc, char*argv[]){
 	}else{
 		filename = argv[1];
 	}
+//	CLFlow((char*)filename.c_str());
 	MakeBestDigests((char*)filename.c_str());
 //	CutAndDefinePriority((char*)filename.c_str());
 }
+
+vector<double> movetime;
 
 vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 	//CLFlowの結果を基にオプティカルフローが小さい範囲をショットとして切り出す
@@ -214,7 +218,7 @@ vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
     {
 		CLFlow(filename);
     }
- 
+
 	//CLFlowの結果をRawDataにいったん格納し，その後移動平均を取ってMAveDataに格納
 	std::vector<double> RawData;
 	std::vector<double> MAveData;
@@ -252,6 +256,7 @@ vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 			if(MAveData[i] > THRE){
 				tmp.EndTime = (double)i/FPS;
 				StopArea.push_back(tmp);
+				movetime.push_back((double)i/FPS);
 
 				flag = false;
 			}
@@ -317,7 +322,7 @@ void MakeMonoFile(char* filename){
 	}
 	else{
 		makemonofile << "ffmpeg -i digestmeta\\" << filename << "\\" << filename << ".mp4";
-		makemonofile << " -ac 1 -af \"bandreject=f=500:width_type=h:w=400\" digestmeta\\" << filename << "\\" << filename << "_mono.wav";
+		makemonofile << " -ac 1 -af \"bandreject=f=500:width_type=h:w=200\" digestmeta\\" << filename << "\\" << filename << "_mono.wav";
 		ret = system(makemonofile.str().c_str());
 		if (ret != 0){
 			printf("モノラルファイル作成失敗\n");
@@ -333,8 +338,8 @@ void MakeBestDigests(char* filename){
 	//ベース作り
 	cout << "ベース作り開始" << endl;
 
-	vector<Shot> shots[2];
-	shots[0] = MakeShotBaseBySpeech(filename,2,11); //真ん中を11秒にして，最大でそれを２秒ずつ両端に伸ばしたMAX１５秒の範囲をとってくる
+	vector<Shot> shots[3],shots_mix;
+	shots[0] = MakeShotBaseBySpeech(filename,2,30); //真ん中を11秒にして，最大でそれを２秒ずつ両端に伸ばしたMAX15秒の範囲をとってくる
 	shots[1] = MakeShotBaseByOpticalFlow(filename);
 
 	//範囲の調整
@@ -392,6 +397,28 @@ void MakeBestDigests(char* filename){
 		}
 	}
 
+	//オプティカルフローの移り変わりを元に，一つの立ち止まっている区間での発話ピックアップを１シーンまでに
+	for(int i=0;i<movetime.size()-1;i++){
+		int best;
+		vector<int> nearscenes;
+		for(int j=0;j<shots[0].size();j++){
+			if( movetime[i] < shots[0][j].StartTime && shots[0][j].StartTime < movetime[i+1]){
+				nearscenes.push_back(j);
+			}
+		}
+		if(nearscenes.size()>=1){
+			best = nearscenes[0];
+			for(int k=1;k<nearscenes.size();k++){
+				if(shots[0][best].VolumeChangeSum < shots[0][nearscenes[k]].VolumeChangeSum){
+					best = nearscenes[k];
+				}
+			}
+			shots[2].push_back(shots[0][best]);
+		}
+		nearscenes.clear();
+	}
+
+	/*
 	//被っている時間が半分以上ある場合は，VolumeChangeAveandSumの値が大きい方を残して，小さい方を消す
 	CalcVolumeChangeAveandSum(shots[0],filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
 	for(int i=0;i<shots[0].size()-1;i++){
@@ -402,7 +429,7 @@ void MakeBestDigests(char* filename){
 				shots[0].erase(shots[0].begin()+i);
 			}
 		}
-	}
+	}*/
 
 	//オプティカルフロー
 
@@ -443,32 +470,40 @@ void MakeBestDigests(char* filename){
 			i++;
 		}
 	}
-
+	
 	//2つのカットを1つにする
 	for(int i=0;i<shots[1].size();i++){
-		shots[0].push_back(shots[1][i]);
+		shots_mix.push_back(shots[1][i]);
+	}
+	for(int i=0;i<shots[2].size();i++){
+		shots_mix.push_back(shots[2][i]);
 	}
 
-	//被っている時間が2秒以上ある場合は，MixPriorityの値が大きい方を残す
-	CalcVolumeAndFlowMixPriority(shots[0],1,1,1);										//volume_ratio,optflow_ratioの比で優先度を定義
-	CalcFlowAve(shots[0],filename);
-	for(int i=0;i<shots[0].size()-1;){
-		if(shots[0][i].EndTime-2 > shots[0][i+1].StartTime){
-			if(shots[0][i].VolumeAndFlowMixPriority > shots[0][i+1].VolumeAndFlowMixPriority){
-				shots[0].erase(shots[0].begin()+i+1);
+	std::sort(shots_mix.begin(),shots_mix.end(),Shot::StartTime_cmp);
+
+	//前後間隔が30秒以内の場合は，MixPriorityの値が大きい方を残す
+	/*
+	CalcVolumeChangeAveandSum(shots_mix,filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
+	CalcFlowAve(shots_mix,filename);
+	CalcVolumeAndFlowMixPriority(shots_mix,1,1,1);										//volume_ratio,optflow_ratioの比で優先度を定義
+	for(int i=0;i<shots_mix.size()-1;){
+		if(shots_mix[i].StartTime + 30 > shots_mix[i+1].StartTime){
+			if(shots_mix[i].VolumeAndFlowMixPriority > shots_mix[i+1].VolumeAndFlowMixPriority){
+				shots_mix.erase(shots_mix.begin()+i+1);
 			}else{
-				shots[0].erase(shots[0].begin()+i);
+				shots_mix.erase(shots_mix.begin()+i);
 			}
 		}else{
 			i++;
 		}
 	}	
+	*/
 
 	//ソート
 	cout << "ソート開始" << endl;
-	CalcFlowAve(shots[0],filename);				//ショットのオプティカルフローの平均を計算 .FlowAve
-	CalcVolumeChangeAveandSum(shots[0],filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
-	CalcFlowDirection(shots[0],filename);			//ショットのFlowDirectionの平均を計算（使わなさそう）
+	CalcFlowAve(shots_mix,filename);				//ショットのオプティカルフローの平均を計算 .FlowAve
+	CalcVolumeChangeAveandSum(shots_mix,filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
+	//CalcFlowDirection(shots_mix,filename);			//ショットのFlowDirectionの平均を計算（使わなさそう）
 
 	//パラメータ推定用
 	/*
@@ -477,9 +512,9 @@ void MakeBestDigests(char* filename){
 	oss_d << "digestmeta\\" << filename << "\\" << filename << "_d.txt";
 	output_d = fopen(oss_d.str().c_str(), "w");
 
-	for(int i=0;i<shots[0].size();i++){
+	for(int i=0;i<shots_mix.size();i++){
 		ostringstream tmp;
-		tmp << shots[0][i].VolumeChangeSum << "\t" << shots[0][i].VolumeChangeThreSum << "\t" << shots[0][i].FlowAverage << endl ;
+		tmp << shots_mix[i].VolumeChangeSum << "\t" << shots_mix[i].VolumeChangeThreSum << "\t" << shots_mix[i].FlowAverage << endl ;
 		fprintf(output_d,tmp.str().c_str());
 	}
 	fclose(output_d);
@@ -487,53 +522,130 @@ void MakeBestDigests(char* filename){
 	//パラメータ推定用
 
 	//自分用
-	CalcVolumeAndFlowMixPriority(shots[0],1,0,0);										//volume_ratio,optflow_ratioの比で優先度を定義
-	std::sort(shots[0].begin(), shots[0].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+//	CalcVolumeAndFlowMixPriority(shots_mix,1,1,0);										//volume_ratio,optflow_ratioの比で優先度を定義
+//	std::sort(shots_mix.begin(), shots_mix.end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+	CalcVolumeAndFlowMixPriority(shots[2],1,0,0);										//volume_ratio,optflow_ratioの比で優先度を定義
+	std::sort(shots[2].begin(), shots[2].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
 
-	FILE *output_private;
-	ostringstream oss_private;
-	oss_private << "bat3\\" << filename << "_privatedigest.bat";
-	output_private = fopen(oss_private.str().c_str(), "w");
+	/*
+	//batに出力↓
+	FILE *output_selfspeak;
+	ostringstream oss_selfspeak;
+	oss_selfspeak << "bat3\\" << filename << "_selfspeakdigest.bat";
+	output_selfspeak = fopen(oss_selfspeak.str().c_str(), "w");
+	*/
 
-	vector<Shot> shots_private;
-	for(int i=0;i<20;i++){
-		shots_private.push_back(shots[0][i]);
+	vector<Shot> shots_selfspeak;
+	double Digesttime_selfspeak=0;
+//	for(int i=0;Digesttime_selfspeak<180;i++){//時間で個数を選ぶ場合
+	for(int i=0;i<20;i++){//個数で選ぶ
+		shots_selfspeak.push_back(shots[2][i]);
+		Digesttime_selfspeak += (shots[2][i].EndTime - shots[2][i].StartTime);
 	}
-	std::sort(shots_private.begin(), shots_private.end(), &Shot::StartTime_cmp);		//実際にソートする関数
-	
-	for(int i=0;i<shots_private.size();i++){
+	//std::sort(shots_selfspeak.begin(), shots_selfspeak.end(), &Shot::StartTime_cmp);
+
+	/*
+	for(int i=0;i<shots_selfspeak.size();i++){
 		ostringstream tmp;
-		tmp << "ffmpeg -r 30 -i ../digestmeta\\大きい動画\\" << filename << "_QHD.mp4 -ss " << shots_private[i].StartTime
-			<< " -t " << shots_private[i].EndTime - shots_private[i].StartTime << " -af \"afade=t=in:ss=0:d=1,afade=t=out:st=" << shots_private[i].EndTime-1
-			<< ":d=1\" -vf \"fade=in:0:30,fade=out:" << (shots_private[i].EndTime-1)*30 <<":30\" ../digestmeta\\" << "途中ファイル" << "\\" << filename << "\\private_" << i << ".mp4" << endl ;
-		fprintf(output_private,tmp.str().c_str());
+		tmp << "ffmpeg -r 30 -i ../digestmeta\\大きい動画\\" << filename << "_QHD.mp4 -ss " << shots_selfspeak[i].StartTime
+			<< " -t " << shots_selfspeak[i].EndTime - shots_selfspeak[i].StartTime << " -af \"afade=t=in:ss=0:d=1,afade=t=out:st=" << shots_selfspeak[i].EndTime-1
+			<< ":d=1\" -vf \"fade=in:0:30,fade=out:" << (shots_selfspeak[i].EndTime-1)*30 <<":30\" ../digestmeta\\" << "途中ファイル" << "\\" << filename << "\\selfspeak_" << i << ".mp4" << endl ;
+		fprintf(output_selfspeak,tmp.str().c_str());
 	}
-	fclose(output_private);
+	fclose(output_selfspeak);
+	*/
+	//batに出力↑
 
+	//Viewerのメタファイル↓
+	FILE *output_selfspeak_txt;
+	ostringstream oss_selfspeak_txt;
+	oss_selfspeak_txt << "digestmeta\\" << filename << "\\" << filename << "_selfspeak_digest.txt";
+	output_selfspeak_txt = fopen(oss_selfspeak_txt.str().c_str(), "w");
 
-	//他人用
-	CalcVolumeAndFlowMixPriority(shots[0],0,0,1);										//volume_ratio,optflow_ratioの比で優先度を定義
-	std::sort(shots[0].begin(), shots[0].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
-
-	FILE *output_public;
-	ostringstream oss_public;
-	oss_public << "bat3\\" << filename << "_publicdigest.bat";
-	output_public = fopen(oss_public.str().c_str(), "w");
-
-	vector<Shot> shots_public;
-	for(int i=0;i<20;i++){
-		shots_public.push_back(shots[0][i]);
-	}
-	std::sort(shots_public.begin(), shots_public.end(), &Shot::StartTime_cmp);		//実際にソートする関数
-	
-	for(int i=0;i<shots_public.size();i++){
+	for(int i=0;i<shots_selfspeak.size();i++){
 		ostringstream tmp;
-		tmp << "ffmpeg -r 30 -i ../digestmeta\\大きい動画\\" << filename << "_QHD.mp4 -ss " << shots_public[i].StartTime
-			<< " -t " << shots_public[i].EndTime - shots_public[i].StartTime << " -af \"afade=t=in:ss=0:d=1,afade=t=out:st=" << shots_public[i].EndTime-1
-			<< ":d=1\" -vf \"fade=in:0:30,fade=out:" << (shots_public[i].EndTime-1)*30 <<":30\" ../digestmeta\\" << "途中ファイル" << "\\" << filename << "\\public_" << i << ".mp4" << endl ;
-		fprintf(output_public,tmp.str().c_str());
+		tmp << shots_selfspeak[i].StartTime << "\t" << shots_selfspeak[i].EndTime << "\t\n";
+		fprintf(output_selfspeak_txt,tmp.str().c_str());
 	}
-	fclose(output_public);
+	fclose(output_selfspeak_txt);	
+	//Viewerのメタファイル↑
+
+
+	//他者の発話
+	CalcVolumeAndFlowMixPriority(shots[2],0,1,0);										//volume_ratio,optflow_ratioの比で優先度を定義
+	std::sort(shots[2].begin(), shots[2].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+
+	vector<Shot> shots_someonespeak;
+	double Digesttime_someonespeak=0;
+//	for(int i=0;Digesttime_someonespeak<180;i++){//時間で個数を選ぶ場合
+	for(int i=0;i<20;i++){//個数で選ぶ
+		shots_someonespeak.push_back(shots[2][i]);
+		Digesttime_someonespeak += (shots[2][i].EndTime - shots[2][i].StartTime);
+	}
+
+	FILE *output_someonespeak_txt;
+	ostringstream oss_someonespeak_txt;
+	oss_someonespeak_txt << "digestmeta\\" << filename << "\\" << filename << "_someonespeak_digest.txt";
+	output_someonespeak_txt = fopen(oss_someonespeak_txt.str().c_str(), "w");
+
+	for(int i=0;i<shots_someonespeak.size();i++){
+		ostringstream tmp;
+		tmp << shots_someonespeak[i].StartTime << "\t" << shots_someonespeak[i].EndTime << "\t\n";
+		fprintf(output_someonespeak_txt,tmp.str().c_str());
+	}
+	fclose(output_someonespeak_txt);	
+
+
+	//オプティカルフロー
+//	CalcVolumeAndFlowMixPriority(shots_mix,0,0,1);										//volume_ratio,optflow_ratioの比で優先度を定義
+//	std::sort(shots_mix.begin(), shots_mix.end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+	CalcVolumeAndFlowMixPriority(shots[1],0,0,1);										//volume_ratio,optflow_ratioの比で優先度を定義
+	std::sort(shots[1].begin(), shots[1].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
+
+	/*
+	//batに出力↓
+	FILE *output_optflow;
+	ostringstream oss_optflow;
+	oss_optflow << "bat3\\" << filename << "_optflowdigest.bat";
+	output_optflow = fopen(oss_optflow.str().c_str(), "w");
+	*/
+
+	vector<Shot> shots_optflow;
+	double Digesttime_optflow=0;
+//	for(int i=0;Digesttime_optflow<60;i++){//時間で個数を選ぶ場合
+	for(int i=0;i<20;i++){//個数で選ぶ
+		shots_optflow.push_back(shots[1][i]);
+		Digesttime_optflow += (shots[1][i].EndTime - shots[1][i].StartTime);
+	}
+	//std::sort(shots_optflow.begin(), shots_optflow.end(), &Shot::StartTime_cmp);
+
+	/*
+	for(int i=0;i<shots_optflow.size();i++){
+		ostringstream tmp;
+		tmp << "ffmpeg -r 30 -i ../digestmeta\\大きい動画\\" << filename << "_QHD.mp4 -ss " << shots_optflow[i].StartTime
+			<< " -t " << shots_optflow[i].EndTime - shots_optflow[i].StartTime << " -af \"afade=t=in:ss=0:d=1,afade=t=out:st=" << shots_optflow[i].EndTime-1
+			<< ":d=1\" -vf \"fade=in:0:30,fade=out:" << (shots_optflow[i].EndTime-1)*30 <<":30\" ../digestmeta\\" << "途中ファイル" << "\\" << filename << "\\optflow_" << i << ".mp4" << endl ;
+		fprintf(output_optflow,tmp.str().c_str());
+	}
+
+	fclose(output_optflow);
+	*/
+	//batに出力↑
+
+	//Viewerのメタファイル↓
+	FILE *output_optflow_txt;
+	ostringstream oss_optflow_txt;
+	oss_optflow_txt << "digestmeta\\" << filename << "\\" << filename << "_optflow_digest.txt";
+	output_optflow_txt = fopen(oss_optflow_txt.str().c_str(), "w");
+
+	for(int i=0;i<shots_optflow.size();i++){
+		ostringstream tmp;
+		tmp << shots_optflow[i].StartTime << "\t" << shots_optflow[i].EndTime << "\t\n";
+		fprintf(output_optflow_txt,tmp.str().c_str());
+	}
+	fclose(output_optflow_txt);	
+	//Viewerのメタファイル↑
+
 }
 
 void ExtendSpeechAreas(vector<Shot> &speechareas){
@@ -541,13 +653,13 @@ void ExtendSpeechAreas(vector<Shot> &speechareas){
 	std::copy(speechareas.begin(),speechareas.end(),speech_copy.begin());//複製
 	for(int i=1;i<speechareas.size()-1;i++){
 		if( (speech_copy[i].StartTime - speech_copy[i-1].EndTime) > 2){
-			speechareas[i].set_StartTime( speechareas[i].StartTime -2  );
+			speechareas[i].set_StartTime( speech_copy[i].StartTime -2  );
 		}else{
 			speechareas[i].set_StartTime(speech_copy[i-1].EndTime);
 		}
 
 		if(speech_copy[i+1].StartTime - speech_copy[i].EndTime > 2){
-			speechareas[i].set_EndTime(speechareas[i].StartTime+2);
+			speechareas[i].set_EndTime(speech_copy[i].EndTime + 2);
 		}else{
 			speechareas[i].set_EndTime(speech_copy[i+1].StartTime);
 		}
@@ -796,7 +908,7 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &contin
 
 int SearchBoundarySpeech(double time , vector<Shot> &speecharea){
 	for(int i=0;i<speecharea.size();i++){
-		if(speecharea[i].StartTime < time && time < speecharea[i].EndTime){
+		if(speecharea[i].StartTime <= time && time <= speecharea[i].EndTime){
 			return true;
 		}
 	}
@@ -819,10 +931,10 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &speech
 		if(SearchBoundarySpeech(starttime-2,speecharea)==true ){
 			if(SearchBoundarySpeech(starttime,speecharea)==true){
 				for(int i=0;i<speecharea.size();i++){
-					if(speecharea[i].StartTime < starttime-2 && starttime-2 < speecharea[i].EndTime){
+					if(speecharea[i].StartTime <= starttime-2 && starttime-2 <= speecharea[i].EndTime){
 						start_start_index = i;
 					}
-					if(speecharea[i].StartTime < starttime && starttime < speecharea[i].EndTime){
+					if(speecharea[i].StartTime <= starttime && starttime <= speecharea[i].EndTime){
 						start_end_index = i;
 					}
 				}
@@ -843,7 +955,7 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &speech
 			}else{
 				bool flag = true;
 				for(int i=0;i<speecharea.size();i++){
-					if(speecharea[i].StartTime < starttime-2 && starttime-2 < speecharea[i].EndTime){
+					if(speecharea[i].StartTime <= starttime-2 && starttime-2 <= speecharea[i].EndTime){
 						start_start_index = i;
 					}
 					if(flag == true && speecharea[i].StartTime > starttime){
@@ -870,7 +982,7 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &speech
 						start_start_index = i;
 						flag = false;
 					}
-					if(speecharea[i].StartTime < starttime && starttime < speecharea[i].EndTime){
+					if(speecharea[i].StartTime <= starttime && starttime <= speecharea[i].EndTime){
 						start_end_index = i;
 					}
 				}
@@ -936,10 +1048,10 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &speech
 			if(SearchBoundarySpeech(endtime+2,speecharea)==true){
 
 				for(int i=0;i<speecharea.size();i++){
-					if(speecharea[i].StartTime < endtime && endtime < speecharea[i].EndTime){
+					if(speecharea[i].StartTime <= endtime && endtime <= speecharea[i].EndTime){
 						end_start_index = i;
 					}
-					if( ( speecharea[i].StartTime < (endtime+2) ) &&  ( (endtime+2) < speecharea[i].EndTime ) ){
+					if( ( speecharea[i].StartTime <= (endtime+2) ) &&  ( (endtime+2) <= speecharea[i].EndTime ) ){
 						end_end_index = i;
 					}
 				}
@@ -964,7 +1076,7 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &speech
 						end_end_index = i-1;
 						flag = false;
 					}
-					if( ( speecharea[i].StartTime < (endtime)  ) && ( (endtime) < speecharea[i].EndTime ) ){
+					if( ( speecharea[i].StartTime <= (endtime)  ) && ( (endtime) <= speecharea[i].EndTime ) ){
 						end_start_index = i;
 					}
 				}
@@ -990,7 +1102,7 @@ void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &speech
 			if(SearchBoundarySpeech(endtime+2,speecharea)==true){
 				bool flag = true;
 				for(int i=0;i<speecharea.size();i++){
-					if(speecharea[i].StartTime < endtime+2 && endtime+2 < speecharea[i].EndTime){
+					if(speecharea[i].StartTime <= endtime+2 && endtime+2 <= speecharea[i].EndTime){
 						end_end_index = i;
 					}
 					if(flag == true && ( speecharea[i].StartTime > (endtime) ) ){
@@ -1362,15 +1474,20 @@ void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
 	for(int j=0;j<shots.size();j++){
 		double volume = 0;
 		double volumeUnderThre = 0;
+		double volumeOverThre = 0;
 		for(int i = (shots[j].StartTime / VolumeAveRange );i<(shots[j].EndTime / VolumeAveRange)-1 ; i++){
 			volume += abs( videovolume_ave[i] - videovolume_ave[i+1] ) ; 
-			if(double tmp = abs( videovolume_ave[i] - videovolume_ave[i+1] ) < VolumeThre){
-				volumeUnderThre += tmp ; 
+			if(double tmp1 = abs( videovolume_ave[i] - videovolume_ave[i+1] ) > VolumeThre){
+				volumeOverThre += tmp1 ; 
+			}
+			if(double tmp2 = abs( videovolume_ave[i] - videovolume_ave[i+1] ) < VolumeThre){
+				volumeUnderThre += tmp2 ; 
 			}
 		}
 		shots[j].set_VolumeAverage( volume / (shots[j].EndTime - shots[j].StartTime) * VolumeAveRange );
-		shots[j].set_VolumeChangeSum(volume);
-		shots[j].set_VolumeChangeThreSum(volumeUnderThre);
+		shots[j].set_VolumeChangeThreOverSum(volume);
+//		shots[j].set_VolumeChangeThreOverSum(volumeOverThre);
+		shots[j].set_VolumeChangeThreUnderSum(volumeUnderThre);
 	}
 }
 
@@ -1406,7 +1523,7 @@ void CalcVolumeAndFlowMixPriority(vector<Shot> &shots, double volume_ratio, doub
 
 void CalcVolumeAndFlowMixPriority(vector<Shot> &shots, double volume_ratio,double volume_thre_ratio , double optflow_ratio){
 	for(int i=0;i<shots.size();i++){
-		shots[i].set_VolumeAndFlowMixPriority(volume_ratio * (shots[i].VolumeChangeSum)/324  + volume_thre_ratio * (shots[i].VolumeChangeThreSum) - optflow_ratio * shots[i].FlowAverage/2069);
+		shots[i].set_VolumeAndFlowMixPriority(volume_ratio * (shots[i].VolumeChangeThreOverSum)/324  + volume_thre_ratio * (shots[i].VolumeChangeThreUnderSum) - optflow_ratio * shots[i].FlowAverage/2069);
 	}
 }
 
