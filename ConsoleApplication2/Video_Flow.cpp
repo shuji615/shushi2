@@ -22,7 +22,6 @@
 #include <opencv2/video/tracking.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-
 #ifdef _DEBUG
 #pragma comment(lib, "opencv_core249d.lib")
 #pragma comment(lib, "opencv_highgui249d.lib")
@@ -54,15 +53,12 @@
 
 #define MAveWidth 110 //10(fps) * 15(秒)
 #define FPS 10.0
-#define Res 400
-#define FRAME 30000
 #define OpticalFlowUnCuttableRate 0.3
 #define VolumeSmoothRange 1
 #define VolumeAveRange 0.01//秒単位
 #define FLOWTHRE 1.3
-#define AdinVolumeThreshold 4500
-#define VolumeThre 250
-#define BestN 10
+#define AdinVolumeThreshold 5000
+#define VolumeThre 280
 #define MaxTime 15
 
 #include "cv.h"
@@ -88,6 +84,7 @@ public:
 	double VolumeAndFlowMixPriority;
 	double VolumeChangeThreUnderSum;
 	double VolumeChangeThreOverSum;
+	double RawVolumeSum;
 	bool ExclusionFlag;
 
 	
@@ -122,6 +119,10 @@ public:
     {
 		return (a.VolumeChangeThreUnderSum > b.VolumeChangeThreUnderSum); 
     }
+	static bool RawVolumeSum_cmp(Shot a, Shot b)
+    {
+		return (a.RawVolumeSum > b.RawVolumeSum);
+    }
 
 	void set_FlowAverage(double in){FlowAverage = in;}
 	void set_VolumeAverage(double in){VolumeAverage = in;}
@@ -132,6 +133,7 @@ public:
 	void set_EndTime(double in){EndTime = in;}
 	void set_FlowDirection(double in){FlowDirection = in;}
 	void set_VolumeAndFlowMixPriority(double in){VolumeAndFlowMixPriority = in;}
+	void set_RawVolumeSum(double in){RawVolumeSum = in;}
 
 };
 
@@ -187,25 +189,43 @@ void MakeBestDigests(char* filename);
 void CalcVolumeAndFlowMixPriority(vector<Shot> &shots, double volume_ratio,double volume_thre_ratio , double optflow_ratio);
 void AdjustCutAreaBySpeechArea(vector<Shot> &adjustingarea, vector<Shot> &speecharea);
 int SearchBoundarySpeech(double time , vector<Shot> &speecharea);
-
+void CLFlow_hv_separate(char* filename);
+int FaceDetection(char* filename,int number);
+vector<Shot> MakeStaticShots(char* filename);
 
 int main(int argc, char*argv[]){
 
+	int mode;
 	string filename;
-	if(argc <2){
+	if(argc <3){
+		cout << "モードを入力してください" << endl;
+		cout << "1:ダイジェストメタファイル作成" << endl;
+		cout << "2:CLFlow計算" << endl;
+		cout << "3:BodyDetection" << endl;
+		scanf("%d",&mode);
+
 		cout << "ファイル名を入力してください" << endl;
 		char tmp_name[50];
 		scanf("%s",tmp_name);
 		filename = tmp_name;
 	}else{
-		filename = argv[1];
+		mode = atoi(argv[1]);
+		filename = argv[2];
 	}
-//	CLFlow((char*)filename.c_str());
-	MakeBestDigests((char*)filename.c_str());
+
+	if(mode == 3){
+		for(int i=0;i<1;i++){
+			FaceDetection((char*)filename.c_str(), i);
+		}
+	}else if(mode == 2){
+		CLFlow((char*)filename.c_str());
+	}else{
+		MakeBestDigests((char*)filename.c_str());
+	}
+//	CLFlow_hv_separate((char*)filename.c_str());
 //	CutAndDefinePriority((char*)filename.c_str());
 }
 
-vector<double> movetime;
 
 vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 	//CLFlowの結果を基にオプティカルフローが小さい範囲をショットとして切り出す
@@ -241,7 +261,12 @@ vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 	average /= MAveData.size();
 	const double THRE = 1.0 * average;//MAveDataの平均を閾値と定義
 
-	vector<Shot> StopArea;
+//	vector<Shot> StopArea;
+	vector<Shot> StopArea = MakeStaticShots(filename);
+
+	/*
+	vector<double> movetime;
+
 	Shot tmp;
 	//オプティカルフローがTHREより小さい区間を，１つの展示にとどまっている区間と定義
 	//１区間の中で，最もオプティカルフローが小さい，(MAveWidth/fps)秒の区間を，オプティカルフローが小さい区間として出力
@@ -264,10 +289,10 @@ vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 			tmp.StartTime = (double)i/FPS;
 			tmp.FlowMinTime = (double)i/FPS;
 			tmp.FlowMinValue = MAveData[i];
-
 			flag = true;
 		}
 	}
+*/
 
 	//出力
 	vector<Shot> OpticalFlowMinArea;
@@ -291,6 +316,86 @@ vector<Shot> MakeShotBaseByOpticalFlow(char* filename){
 
 	return OpticalFlowMinArea;
 }
+
+vector<Shot> MakeStaticShots(char* filename){
+	//CLFlowの結果を基にオプティカルフローが小さい範囲をショットとして切り出す
+
+	//CLFlowの結果がなければ作る
+	ostringstream oss;
+	oss << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum.txt";
+	std::ifstream ifs(oss.str().c_str());
+    if (ifs.fail())
+    {
+		CLFlow(filename);
+    }
+
+	//CLFlowの結果をRawDataにいったん格納し，その後移動平均を取ってMAveDataに格納
+	std::vector<double> RawData;
+	std::vector<double> MAveData;
+	std::copy(std::istream_iterator<double>(ifs), std::istream_iterator<double>(), std::back_inserter(RawData));
+
+	//MAveWidth 幅で平均化し，MAveDataに格納
+	//同時にMAveDataの平均の計算
+	double average=0;
+	for(int i=0;i<RawData.size()-MAveWidth;i++){
+		for(int j=0;j<MAveWidth;j++){
+			if(j==0){
+				MAveData.push_back(RawData[i+j]);
+			}else{
+				MAveData[i] += RawData[i+j];
+			}
+		}
+		MAveData[i] /= MAveWidth;
+		average += MAveData[i];
+	}
+	average /= MAveData.size();
+	const double THRE = 1.0 * average;//MAveDataの平均を閾値と定義
+
+	vector<Shot> StopArea;
+	vector<double> movetime;
+
+	Shot tmp;
+	//オプティカルフローがTHREより小さい区間を，１つの展示にとどまっている区間と定義
+	//１区間の中で，最もオプティカルフローが小さい，(MAveWidth/fps)秒の区間を，オプティカルフローが小さい区間として出力
+	//現在は，MAveWidth/fps = 11としている（これは，何秒単位でオプティカルフローが小さい区間を切り出すかによる）
+	bool flag = false;
+	int counter;
+	for(int i=0;i<MAveData.size();i++){
+		if(flag == true){
+			if(MAveData[i] < tmp.FlowMinValue){
+				tmp.FlowMinValue = MAveData[i];
+				tmp.FlowMinTime = (double)i/FPS;
+			}
+			if(MAveData[i] > THRE){
+				if(counter > FPS * 2){
+					tmp.EndTime = (double)i/FPS;
+					StopArea.push_back(tmp);
+					movetime.push_back((double)i/FPS);
+					flag = false;
+				}else{
+					counter++;
+				}
+			}else{
+				counter=0;
+			}
+		}else if(MAveData[i] < THRE){
+			tmp.StartTime = (double)i/FPS;
+			tmp.FlowMinTime = (double)i/FPS;
+			tmp.FlowMinValue = MAveData[i];
+			flag = true;
+		}
+	}
+
+	for(int i=0;i<StopArea.size();){
+		if(StopArea[i].EndTime - StopArea[i].StartTime < 10){
+			StopArea.erase(StopArea.begin() + i);
+		}else{
+			i++;
+		}
+	}
+	return StopArea;
+}
+
 
 vector<Shot> MakeShotBaseBySpeech(char* filename,double speechinterval, int shotmaxtime){
 
@@ -338,7 +443,7 @@ void MakeBestDigests(char* filename){
 	//ベース作り
 	cout << "ベース作り開始" << endl;
 
-	vector<Shot> shots[3],shots_mix;
+	vector<Shot> shots[3];
 	shots[0] = MakeShotBaseBySpeech(filename,2,30); //真ん中を11秒にして，最大でそれを２秒ずつ両端に伸ばしたMAX15秒の範囲をとってくる
 	shots[1] = MakeShotBaseByOpticalFlow(filename);
 
@@ -397,12 +502,14 @@ void MakeBestDigests(char* filename){
 		}
 	}
 
+	vector<Shot> StopArea = MakeStaticShots(filename);
+
 	//オプティカルフローの移り変わりを元に，一つの立ち止まっている区間での発話ピックアップを１シーンまでに
-	for(int i=0;i<movetime.size()-1;i++){
+	for(int i=0;i<StopArea.size()-1;i++){
 		int best;
 		vector<int> nearscenes;
 		for(int j=0;j<shots[0].size();j++){
-			if( movetime[i] < shots[0][j].StartTime && shots[0][j].StartTime < movetime[i+1]){
+			if( StopArea[i].StartTime < shots[0][j].StartTime && shots[0][j].StartTime < StopArea[i].EndTime){
 				nearscenes.push_back(j);
 			}
 		}
@@ -471,15 +578,6 @@ void MakeBestDigests(char* filename){
 		}
 	}
 	
-	//2つのカットを1つにする
-	for(int i=0;i<shots[1].size();i++){
-		shots_mix.push_back(shots[1][i]);
-	}
-	for(int i=0;i<shots[2].size();i++){
-		shots_mix.push_back(shots[2][i]);
-	}
-
-	std::sort(shots_mix.begin(),shots_mix.end(),Shot::StartTime_cmp);
 
 	//前後間隔が30秒以内の場合は，MixPriorityの値が大きい方を残す
 	/*
@@ -499,10 +597,13 @@ void MakeBestDigests(char* filename){
 	}	
 	*/
 
+	CalcVolumeChangeAveandSum(shots[1],filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
+	CalcVolumeChangeAveandSum(shots[2],filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
+	CalcFlowAve(shots[1],filename);
+	CalcFlowAve(shots[2],filename);
+
 	//ソート
 	cout << "ソート開始" << endl;
-	CalcFlowAve(shots_mix,filename);				//ショットのオプティカルフローの平均を計算 .FlowAve
-	CalcVolumeChangeAveandSum(shots_mix,filename);	//ショットのVolumeChangeSumを計算 .VolumeChangeSum
 	//CalcFlowDirection(shots_mix,filename);			//ショットのFlowDirectionの平均を計算（使わなさそう）
 
 	//パラメータ推定用
@@ -525,6 +626,7 @@ void MakeBestDigests(char* filename){
 //	CalcVolumeAndFlowMixPriority(shots_mix,1,1,0);										//volume_ratio,optflow_ratioの比で優先度を定義
 //	std::sort(shots_mix.begin(), shots_mix.end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
 	CalcVolumeAndFlowMixPriority(shots[2],1,0,0);										//volume_ratio,optflow_ratioの比で優先度を定義
+//	std::sort(shots[2].begin(), shots[2].end(), &Shot::RawVolumeSum_cmp);		//実際にソートする関数
 	std::sort(shots[2].begin(), shots[2].end(), &Shot::VolumeAndFlowMixPriority_cmp);		//実際にソートする関数
 
 	/*
@@ -1448,6 +1550,7 @@ void CalcFlowAve(vector<Shot> &shots, char* filename){
 	}
 }
 
+/*
 void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename, double threshold){
 
 	vector<short> videovolume = readwave(filename);
@@ -1464,6 +1567,7 @@ void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename, double thres
 		shots[j].set_VolumeChangeSum(volume);
 	}
 }
+*/
 
 void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
 
@@ -1475,8 +1579,10 @@ void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
 		double volume = 0;
 		double volumeUnderThre = 0;
 		double volumeOverThre = 0;
+		double rawvolumesum = 0;
 		for(int i = (shots[j].StartTime / VolumeAveRange );i<(shots[j].EndTime / VolumeAveRange)-1 ; i++){
-			volume += abs( videovolume_ave[i] - videovolume_ave[i+1] ) ; 
+			volume += abs( videovolume_ave[i] - videovolume_ave[i+1] ) ;
+			rawvolumesum += abs( videovolume_ave[i]);
 			if(double tmp1 = abs( videovolume_ave[i] - videovolume_ave[i+1] ) > VolumeThre){
 				volumeOverThre += tmp1 ; 
 			}
@@ -1486,6 +1592,7 @@ void CalcVolumeChangeAveandSum(vector<Shot> &shots, char* filename){
 		}
 		shots[j].set_VolumeAverage( volume / (shots[j].EndTime - shots[j].StartTime) * VolumeAveRange );
 		shots[j].set_VolumeChangeThreOverSum(volume);
+		shots[j].set_RawVolumeSum(rawvolumesum);
 //		shots[j].set_VolumeChangeThreOverSum(volumeOverThre);
 		shots[j].set_VolumeChangeThreUnderSum(volumeUnderThre);
 	}
@@ -2339,3 +2446,198 @@ void CutAndDefinePriority(char* filename){
 }
 
 */
+
+void CLFlow_hv_separate(char* filename){
+
+	ostringstream moviefile;
+	moviefile  << "digestmeta\\" << filename << "\\" << filename << ".mp4";
+//	moviefile  << "digestmeta\\" << filename << "\\" << filename << "_test.mp4";//デバッグ用
+	// 動画ファイルの読み込み
+	VideoCapture capture = VideoCapture(moviefile.str().c_str());
+	// TV-L1アルゴリズムによるオプティカルフロー計算オブジェクトの生成
+	Ptr<DenseOpticalFlowExt> opticalFlow = superres::createOptFlow_DualTVL1();
+
+	// 前のフレームを保存しておく
+	Mat prev,curr;
+	capture >> prev;
+
+//	FILE *output_hist;
+//	output_hist = fopen("CLFlow_hist.txt", "w");
+
+	FILE *output_sum_horizontal;
+	ostringstream oss_outsum_horizontal;
+	oss_outsum_horizontal  << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum_horizontal.txt";
+	output_sum_horizontal = fopen(oss_outsum_horizontal.str().c_str(), "w");
+
+	FILE *output_sum_vertical;
+	ostringstream oss_outsum_vertical;
+	oss_outsum_vertical  << "digestmeta\\" << filename << "\\" << filename << "_CLFlow_sum_vertical.txt";
+	output_sum_vertical = fopen(oss_outsum_vertical.str().c_str(), "w");
+
+	for (int count=0;;count++)
+	{
+		cout << "CLFlow Frame: " << count  << "\n";
+
+		int opt_hist[1000];
+		for(int i=0;i<1000;i++){
+			opt_hist[i]=0;
+		}
+
+		// 現在のフレームを保存
+		capture >> curr;
+
+		// 画像データ取得に失敗したらループを抜ける
+		if (curr.empty()) break;
+
+		////
+		OpticalFlowIO ofio;
+		DImage Im1,Im2,vx,vy,warp;
+
+		Im1.matimread(prev);
+		Im2.matimread(curr);
+
+		ofio.OpticalFlowIOMain(vx,vy,Im1,Im2,warp);
+
+
+//		Mat magnitude = Mat::zeros(90, 160, CV_8UC1);
+
+		/*
+		DImage tmp;
+		std::ostringstream oss_;
+		oss_ << "arrow/arrow_" << count << ".jpg"; 
+		VisualizeDimageFlow(vx, vy, tmp, const_cast<char*>( oss_.str().c_str()) );
+		vx.imwrite("vx.jpg");
+		vy.imwrite("vy.jpg");
+		*/
+
+		int opt_sum_horizontal=0;
+		int opt_sum_vertical=0;
+		for(int y = 0; y < vx.height(); ++y){
+			for(int x = 0; x < vx.width(); ++x){
+				//デバッグ用
+//				magnitude.at<unsigned char>(y,x) = 255*sqrt(pow(vx.pData[y*vx.width()+x],2) + pow(vy.pData[y*vx.width()+x],2));
+				//デバッグ用
+
+				int k = std::min(999,(int)(100*sqrt(pow(vx.pData[y*vx.width()+x],2) + pow(vy.pData[y*vx.width()+x],2))));
+				opt_hist[k]++;
+				
+				opt_sum_horizontal += 100*vx.pData[y*vx.width()+x];
+				opt_sum_vertical += 100*vy.pData[y*vx.width()+x];
+			}
+		}
+		fprintf(output_sum_horizontal,"%d\n",opt_sum_horizontal);
+		fprintf(output_sum_vertical,"%d\n",opt_sum_vertical);
+
+
+		//デバッグ用
+		
+//		ostringstream osstmp;
+//		osstmp << "digestmeta\\kihara\\" << count+1 <<".png";
+//		cv::imwrite(osstmp.str().c_str(),magnitude);
+
+		//デバッグ用
+
+
+		/*
+		for(int j=0;j<1000;j++){
+			fprintf(output_hist, "%d\t",opt_hist[j]);
+		}
+		fprintf(output_hist, "\n");
+		*/
+
+		curr.copyTo(prev);
+	}
+
+}
+
+int FaceDetection(char* filename, int number)
+{
+	cout << number << endl;
+    cv::Mat img , gray;
+	// 動画ファイルの読み込み
+	ostringstream moviefile;
+
+	moviefile  << "digestmeta\\" << filename << "\\QHD\\" << number << ".mp4";
+	VideoCapture capture = VideoCapture(moviefile.str().c_str());
+
+    //カメラがオープンできない場合終了
+    if( !capture.isOpened() )
+    {
+        return -1;
+    }
+    
+	/*
+    // ウィンドウを作成する
+    char windowName[] = "camera";
+    cv::namedWindow( windowName, CV_WINDOW_AUTOSIZE );
+	*/
+    
+    // 分類器の読み込み(2種類あるから好きな方を)
+//    std::string cascadeName = "haarcascades/haarcascade_upperbody.xml";
+    std::string cascadeName = "haarcascades/haarcascade_upperbody.xml";
+//    std::string cascadeName = "haarcascades/haarcascade_profileface.xml";
+    cv::CascadeClassifier cascade;
+    if(!cascade.load(cascadeName))
+        return -1;
+    
+    //scaleの値を用いて元画像を縮小、符号なし8ビット整数型，1チャンネル(モノクロ)の画像を格納する配列を作成
+    double scale = 4.0;    
+
+	FILE *output;         // 出力ストリーム
+	ostringstream outputtxt;
+	outputtxt  << "digestmeta\\" << filename << "\\QHD\\" << number << ".txt";
+
+	output = fopen(outputtxt.str().c_str(), "w");
+
+    // 何かキーが押下されるまで、ループをくり返す
+    for(int flame_num=0;;flame_num++)
+    {
+        capture >> img;
+
+		// 画像データ取得に失敗したらループを抜ける
+		if (img.empty()) break;
+
+        // グレースケール画像に変換
+        cv::cvtColor(img, gray, CV_BGR2GRAY);
+        cv::Mat smallImg(cv::saturate_cast<int>(img.rows/scale), cv::saturate_cast<int>(img.cols/scale), CV_8UC1);
+        // 処理時間短縮のために画像を縮小
+        cv::resize(gray, smallImg, smallImg.size(), 0, 0, cv::INTER_LINEAR);
+        cv::equalizeHist( smallImg, smallImg);
+        
+        std::vector<cv::Rect> faces;
+        /// マルチスケール（顔）探索xo
+        // 画像，出力矩形，縮小スケール，最低矩形数，（フラグ），最小矩形
+        cascade.detectMultiScale(smallImg, faces, 1.1, 2, CV_HAAR_SCALE_IMAGE, cv::Size(30, 30));
+        //cascade.detectMultiScale(smallImg, faces);
+        
+		int facecount=0;
+
+        // 結果の描画
+        std::vector<cv::Rect>::const_iterator r = faces.begin();
+        for(; r != faces.end(); ++r)
+        {
+			facecount++;
+			
+            cv::Point center;
+            int radius;
+            center.x = cv::saturate_cast<int>((r->x + r->width*0.5)*scale);
+            center.y = cv::saturate_cast<int>((r->y + r->height*0.5)*scale);
+            radius = cv::saturate_cast<int>((r->width + r->height)*0.25*scale);
+            cv::circle( img, center, radius, cv::Scalar(80,80,255), 3, 8, 0 );
+
+			fprintf(output,"%d\t%d\t%d\n",flame_num, center.x,center.y);
+        }
+		if(facecount>0){
+			std::ostringstream oss;
+			oss  << "digestmeta\\" << filename << "\\QHD\\" << number << "_" << flame_num << ".png";
+			cv::imwrite( oss.str().c_str(),img );
+		}
+        //cv::namedWindow("result", CV_WINDOW_AUTOSIZE|CV_WINDOW_FREERATIO);
+//        cv::imshow( windowName, img );
+		
+        //cv::waitKey(0);
+
+    }
+	fclose(output);
+	return 0;
+}

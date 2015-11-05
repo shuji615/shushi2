@@ -62,11 +62,13 @@ using namespace cv;
 using namespace cv::superres;
 
 
-int _main()
+int __FaceDetection(char* filename)
 {
     cv::Mat img , gray;
 	// 動画ファイルの読み込み
-	VideoCapture capture = VideoCapture("koizumi.mp4");
+	ostringstream oss;
+	oss << filename << ".mp4";
+	VideoCapture capture = VideoCapture(oss.str().c_str());
 
     //カメラがオープンできない場合終了
     if( !capture.isOpened() )

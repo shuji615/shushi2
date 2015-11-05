@@ -101,10 +101,10 @@
     <ClCompile Include="face.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="FaceDetection.cpp">
+    <ClCompile Include="wave.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="wave.cpp">
+    <ClCompile Include="FaceDetection.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
